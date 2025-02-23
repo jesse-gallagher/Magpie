@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<note class="view" xmlns="http://www.lotus.com/dxl">
+  <item name="$FormatNote" sign="true" summary="true">
+    <rawitemdata type="4">
+AQCU7G6FoWlsP/FjaADvdyWF
+</rawitemdata>
+  </item>
+  <item name="$FormulaClass" sign="true">
+    <text>1</text>
+  </item>
+  <item name="$Index" sign="true">
+    <text/>
+  </item>
+  <item name="$Formula" sign="true" summary="true">
+    <formula compiled="true">
+XAAFACwAJwAEAAYACAAJAAQAZ2FtZUlkaW1hZ2VVcmwkQ29uZmxpY3QkUkVGAAQABAAAACAABQAE
+AEZvcm0BAAwAR2FtZU1ldGFkYXRhCgIDAAcACgAEAAlMMVM=
+</formula>
+  </item>
+  <item name="$Collation" summary="true">
+    <rawitemdata type="2">
+EwABAABEgGYAAAAGAGdhbWVJZA==
+</rawitemdata>
+  </item>
+  <item name="$ViewFormat" sign="true" summary="true">
+    <rawitemdata type="5">
+AQACAAQAiEAAAFZDAQAGAAcAAAAAAFAAAQAACgAAAAAAAAAAAAICAAAAVkMAAAgACQAAAAAAUAAB
+AAAKAAAAAAAAAAAAAgIAAABnYW1lSWRHYW1lIElEaW1hZ2VVcmxJbWFnZSBVUkwmAAEAAAABAQAJ
+AQAACgEBDgoAAD8ArSsBAAEAAQAAAAAAAAAAAFdDAQUACQAAAAAAAAAAAAAAAAAAAAAAAAQAAAAA
+AP//AAAAAAAAAAAAAAAAAABXQwEBAAkAAAAAAAAAAAAAAAAAAAAAAAAEAAAAAAD//wAAAAAAAAAA
+AAAAAAAAQgARAAAAAQD///8AAQDv7+8AAQD///8AAAAAAAAAAAABAP///wABAP///wAAAAEAAAAA
+AAEAAAAAAAEAAAAAAAAACAAAAAAAAQA=
+</rawitemdata>
+  </item>
+  <item name="$Comment" sign="true">
+    <text/>
+  </item>
+  <item name="$Flags">
+    <text>PY</text>
+  </item>
+  <item name="$V5ACTIONS" sign="true">
+    <rawitemdata type="1">
+vRwjAAAAAQABAAAAAQAAAAAAAAAAAAAACAACAHn/bAABANTQyAABAAAAAAAJAAAAAAABANTQyAAA
+AB8AAAAAAAAAAAADAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAPz/OgAAAAAAAQAAAAAAAQAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAEAAAAAAAAAAAAAAAAAAAA=
+</rawitemdata>
+  </item>
+  <item name="$TITLE" sign="true">
+    <text>Game Metadata</text>
+  </item>
+  <item name="$DesignerBuild" sign="true">
+    <text>Build V1450_12042024</text>
+  </item>
+</note>

@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<note class="form" xmlns="http://www.lotus.com/dxl">
+  <item name="$Comment" sign="true">
+    <text/>
+  </item>
+  <item name="$HTMLCode" sign="true">
+    <rawitemdata type="1">
+X/8QAAIADwAHAAAAAAAAAA==
+</rawitemdata>
+  </item>
+  <item name="$TITLE">
+    <text>GameMetadata</text>
+  </item>
+  <item name="$Info" sign="true">
+    <rawitemdata type="1">
+hhgBAIgAAAAAgAAAAQABAP///wAQAAAA
+</rawitemdata>
+  </item>
+  <item name="$SubForms">
+    <text>Footer</text>
+  </item>
+  <item name="$SubForm_RepIDs" sign="true">
+    <text>0000000000000000</text>
+  </item>
+  <item name="$WindowTitle" sign="true">
+    <formula>"Game Metadata"</formula>
+  </item>
+  <item name="$Flags">
+    <text/>
+  </item>
+  <item name="$DesignerBuild">
+    <text>Build V1450_12042024</text>
+  </item>
+  <item name="gameId" summary="false">
+    <number>0</number>
+  </item>
+  <item name="imageUrl" placeholder="true">
+    <rawitemdata type="0"/>
+  </item>
+  <item name="CreatedBy" placeholder="true">
+    <rawitemdata type="0"/>
+  </item>
+  <item name="DateComposed" summary="false">
+    <rawitemdata type="400">
+AAAAAAAAAAA=
+</rawitemdata>
+  </item>
+  <item name="ModifiedBy" placeholder="true">
+    <rawitemdata type="0"/>
+  </item>
+  <item name="DateModified" summary="false">
+    <rawitemdata type="400">
+AAAAAAAAAAA=
+</rawitemdata>
+  </item>
+  <item name="$Fields">
+    <textlist>
+      <text>DateModified</text>
+      <text>ModifiedBy</text>
+      <text>DateComposed</text>
+      <text>CreatedBy</text>
+      <text>imageUrl</text>
+      <text>gameId</text>
+    </textlist>
+  </item>
+  <item name="$Body" sign="true">
+    <rawitemdata type="1">
+gQKC/1oAAQAAAAAAAAAAAKAFAACgBQAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAABAAAAAJSHAAAAAAAAAAAAAAAAAQAAAAQAAACDBAEAhf8IAAEAAAqBAoL/WgACAAAA
+AAAAAAEAoAUAAKAFAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAEA
+AAAAlISgBQoAoAUKAAAAZAABAAAABAAAAKZCBwAAAAIASGVhZGxpbmUAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAQELDBAASmVzc2UgR2FsbGFnaGVyLYMEAgDdBgAAhf+F/xUAAQELDEdhbWUg
+TWV0YWRhdGEA0ggBAIAAgADeBgAAhf+BAoMEAQCF/wgAAQAACoECgv9aAAMAAAAAAAAAAACgBQAA
+oAUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAQAAAACUhQAAAACg
+BQoAAAAAAAEAAAAEAAAAgwQDAN0GAQD7//v/LAABAAAAAgIBAAAAAAAAAAAAAAAAAO/v7wD///8A
+AQAAAAAAAAAAAAAAXP8+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA4AAAAA
+AAAAAQAACgAAAAABAAAAAADeBgEA+/+jDqAFSABIAEgASAACAqQSAADoBSgRAAAAAgAAAQEAAIEC
+gv9aAAQAAAAAAAAAAADoBSgR6AUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAACGAQAAAABUhwAAAAAAAAAAAAAAAAEAAAAEAAAAgwQEAIX/DwABAAAKR2FtZSBJRACkEgAB
+uBFDVoBwAAIAAAEBAACBAoL/WgAFAAAAAAAAAAAAuBFDVrgRAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAhgEAAAAAVIcAAAAAAAAAAAAAAAABAAAABAAAAIMEBQCF/wgA
+AQAACt0GAACK//7/UAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHgAeAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAiv8qAIoAAAMAMAIAAAAAAAACAQAACgAA
+AAAAAAAABgAAAAAAZ2FtZUlk3gYAAIr/hf8IAAEAAAqkEgEA6AUoEQAAAAIAAAEBAACBAoMEBACF
+/xEAAQAACkltYWdlIFVSTACkEgEBuBFDVoBwAAIAAAEBAACBAoMEBQCF/wgAAQAACt0GAACK//7/
+UAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAHgAeAAAAAAAAAAAAAAAAAAAAAAA
+AAAAAAAAAAAAAAAAAAAAAAAAAAAAiv8sAIoAAAUAMAIAAAAAAAACAQAACgAAAAAAAAAACAAAAAAA
+aW1hZ2VVcmxiDgEAhAAAAAAAAAAAAN4GAACK/4X/CAABAAAKpQYAAAAAgQKDBAEAhf8IAAEAAAqB
+AoMEAQCF/wgAAQAACoECgwQBAIX/CAABAAAK3QYAAK3/cf8oAAAAAAADABgABgAAAAAAAAAAAAAA
+AAAAAAAAAAAAAEZvb3Rlcq3/EwAOAAgAAAAHAEZvb3RlcgAArgLeBgAArgCF/wgAAQAACoECgv9a
+AAYAAQAAAAAAAACgBQAAoAUAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA
+AAAACQAAAACUhwAAAAAAAAAAAAAAAAEAAAAEAAAAu/8YAAYAAACi+P00/X8KAAAACACJAAMAgwQG
+AIX/CAABAAAK
+</rawitemdata>
+  </item>
+</note>
