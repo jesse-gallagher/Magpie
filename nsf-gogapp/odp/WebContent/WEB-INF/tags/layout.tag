@@ -12,6 +12,7 @@
 		
 		<link rel="shortcut icon" href="${pageContext.request.contextPath}/$Icon" />
 		<link rel="apple-touch-icon" sizes="32x32" href="${pageContext.request.contextPath}/$Icon" />
+		<link rel="stylesheet" href="css/normalize.css" />
 		<link rel="stylesheet" href="css/milligram.css" />
 		<link rel="stylesheet" href="css/style.css" />
 		

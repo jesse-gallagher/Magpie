@@ -80,12 +80,6 @@ details.expanding-form {
 	}
 }
 
-fieldset {
-	border: 1px solid #ccc;
-	border-radius: 0.5rem;
-	padding: 1rem;
-}
-
 @media (max-width: 749px) {
 	body {
 		max-width: 100%;

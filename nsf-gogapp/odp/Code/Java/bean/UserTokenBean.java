@@ -1,7 +1,6 @@
 package bean;
 
 import java.util.List;
-import java.util.Optional;
 
 import jakarta.enterprise.context.Dependent;
 import jakarta.inject.Inject;
@@ -18,7 +17,7 @@ public class UserTokenBean {
 		return userTokens.list().toList();
 	}
 	
-	public Optional<UserToken> getActive() {
-		return userTokens.findAll().findFirst();
+	public boolean isAnyExist() {
+		return userTokens.list().findFirst().map(t -> true).orElse(false);
 	}
 }
