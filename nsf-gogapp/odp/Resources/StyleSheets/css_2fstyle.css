@@ -25,6 +25,21 @@ article.game-display {
 	background-color: #CCCCCC;
 }
 
+details.expanding-form {
+	border: 1px solid #ccc;
+	padding: 1rem;
+	border-radius: 0.5rem;
+	
+	summary {
+		font-weight: bold;
+		padding-bottom: 0.5rem;
+	}
+	
+	* {
+		max-width: 90%;
+	}
+}
+
 #main-nav {
 	grid-area: nav;
 	background-color: #8700B1;

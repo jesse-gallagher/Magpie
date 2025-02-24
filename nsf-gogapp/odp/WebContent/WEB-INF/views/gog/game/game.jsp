@@ -25,8 +25,9 @@
 		</dd>
 	</dl>
 	
-	<form method="POST" action="${mvc.basePath}/game/@download">
-		<input type="hidden" name="game_id" value="${game_id}"/>
+	<form method="POST" action="${mvc.basePath}/gog/game/@download">
+		<input type="hidden" name="gameId" value="${gameId}"/>
+		<input type="hidden" name="tokenId" value="${tokenId}"/>
 		<input type="submit" value="Download Game Data"/>
 	</form>
 </t:layout>

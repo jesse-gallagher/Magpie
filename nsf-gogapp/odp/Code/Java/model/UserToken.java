@@ -1,9 +1,12 @@
 package model;
 
-import java.util.Optional;
+import java.time.OffsetDateTime;
+import java.util.stream.Stream;
 
+import org.openntf.xsp.jakarta.nosql.communication.driver.DominoConstants;
 import org.openntf.xsp.jakarta.nosql.mapping.extension.DominoRepository;
 import org.openntf.xsp.jakarta.nosql.mapping.extension.RepositoryProvider;
+import org.openntf.xsp.jakarta.nosql.mapping.extension.ViewEntries;
 
 import jakarta.nosql.Column;
 import jakarta.nosql.Entity;
@@ -13,32 +16,39 @@ import jakarta.nosql.Id;
 public class UserToken {
 	@RepositoryProvider("storage")
 	public interface Repository extends DominoRepository<UserToken, String> {
-		Optional<UserToken> findByUserName(String userName);
+		@ViewEntries("User Tokens")
+		Stream<UserToken> list();
 	}
 	
 	@Id
-	private String id;
+	private String documentId;
 	@Column
-	private String userName;
+	private String userId;
 	@Column
 	private String authorizationCode;
 	@Column
 	private String accessToken;
 	@Column
 	private String refreshToken;
+	@Column
+	private String username;
+	@Column
+	private String email;
+	@Column(DominoConstants.FIELD_CDATE)
+	private OffsetDateTime created;
 	
-	public String getId() {
-		return id;
+	public String getDocumentId() {
+		return documentId;
 	}
-	public void setId(String id) {
-		this.id = id;
+	public void setDocumentId(String documentId) {
+		this.documentId = documentId;
 	}
 	
-	public String getUserName() {
-		return userName;
+	public String getUserId() {
+		return userId;
 	}
-	public void setUserName(String userName) {
-		this.userName = userName;
+	public void setUserId(String userId) {
+		this.userId = userId;
 	}
 	
 	public String getAuthorizationCode() {
@@ -60,5 +70,25 @@ public class UserToken {
 	}
 	public void setRefreshToken(String refreshToken) {
 		this.refreshToken = refreshToken;
+	}
+	
+	public String getEmail() {
+		return email;
+	}
+	public void setEmail(String email) {
+		this.email = email;
+	}
+	public String getUsername() {
+		return username;
+	}
+	public void setUsername(String username) {
+		this.username = username;
+	}
+	
+	public OffsetDateTime getCreated() {
+		return created;
+	}
+	public void setCreated(OffsetDateTime created) {
+		this.created = created;
 	}
 }

@@ -25,6 +25,7 @@
 			
 			<ul class="links">
 				<li><a href="${mvc.basePath}/"><c:out value="${translation.home}"/></a></li>
+				<li><a href="${mvc.basePath}/userTokens"><c:out value="${translation.userTokens}"/></a></li>
 				<li><a href="${mvc.basePath}/library"><c:out value="${translation.library}"/></a></li>
 			</ul>
 			

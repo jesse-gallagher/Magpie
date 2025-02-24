@@ -1,5 +1,6 @@
 package bean;
 
+import java.util.List;
 import java.util.Optional;
 
 import jakarta.enterprise.context.Dependent;
@@ -12,6 +13,10 @@ import model.UserToken;
 public class UserTokenBean {
 	@Inject
 	private UserToken.Repository userTokens;
+	
+	public List<UserToken> getAll() {
+		return userTokens.list().toList();
+	}
 	
 	public Optional<UserToken> getActive() {
 		return userTokens.findAll().findFirst();
