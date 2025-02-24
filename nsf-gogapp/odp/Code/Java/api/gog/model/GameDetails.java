@@ -16,8 +16,11 @@ public record GameDetails(
 	String title,
 	String backgroundImage,
 	String cdKey,
+	String changelog,
 	JsonArray downloads,
-	List<GameExtra> extras
+	List<GameExtra> extras,
+	long releaseTimestamp,
+	List<GameDetails> dlcs
 ) {
 	
 	public record DownloadEntry(String language, String os, GameDownload download) {}

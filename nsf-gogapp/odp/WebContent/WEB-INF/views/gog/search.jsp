@@ -4,15 +4,15 @@
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <t:layout>
-	<h2>Search Results</h2>
+	<h2><c:out value="${translation.searchResults}"/></h2>
 	
 	
 	<section class="gallery">
 	<c:forEach items="${result.products}" var="product">
 		<article>
 			<figure>
-				<a href="${mvc.basePath}/game/${product.id}"><img src="${product.image}.webp" style="" /></a>
-				<figcaption><a href="${mvc.basePath}/game/${product.id}"><c:out value="${product.title}"/></a></figcaption>
+				<a href="${mvc.basePath}/gog/game/${product.id}?tokenId=${tokenId}"><img src="${product.image}.webp" style="" /></a>
+				<figcaption><a href="${mvc.basePath}/gog/game/${product.id}?tokenId=${tokenId}"><c:out value="${product.title}"/></a></figcaption>
 			</figure>
 		</article>
 	</c:forEach>

@@ -33,8 +33,8 @@ import model.UserToken;
 import tasks.DownloadGameTask;
 
 @Controller
-@Path("gog/game")
-public class GogGameController {
+@Path("gog")
+public class GogController {
 
 	@Inject
 	private Models models;
@@ -69,8 +69,8 @@ public class GogGameController {
 	private ManagedExecutorService exec;
 	
 	@Path("search")
-	@POST
-	public String search(@FormParam("search") String search, @FormParam("tokenId") String tokenId) {
+	@GET
+	public String search(@QueryParam("search") String search, @QueryParam("tokenId") String tokenId) {
 		UserToken token = tokenRepository.findById(tokenId)
 			.orElseThrow(() -> new IllegalArgumentException(MessageFormat.format("Could not find token for ID {0}", tokenId)));
 
@@ -102,10 +102,10 @@ public class GogGameController {
 		models.put("result", result);
 		models.put("tokenId", tokenId);
 		
-		return "gog/game/search.jsp";
+		return "gog/search.jsp";
 	}
 	
-	@Path("{game_id}")
+	@Path("game/{game_id}")
 	@GET
 	public String getGameDetails(@PathParam("game_id") int gameId, @QueryParam("tokenId") String tokenId) {
 		UserToken token = tokenRepository.findById(tokenId)
@@ -131,7 +131,7 @@ public class GogGameController {
 		return "gog/game/game.jsp";
 	}
 	
-	@Path("@download")
+	@Path("game/@download")
 	@POST
 	public String downloadGame(@FormParam("gameId") int gameId, @FormParam("tokenId") String tokenId) {
 		GameDownloadPlan plan = new GameDownloadPlan();
@@ -145,7 +145,7 @@ public class GogGameController {
 		return "redirect:gog/game/download/" + plan.getDocumentId();
 	}
 	
-	@Path("download/{planId}")
+	@Path("game/download/{planId}")
 	@GET
 	public String showDownloadPlan(@PathParam("planId") String planId) {
 		GameDownloadPlan plan = gameDownloadPlanRepository.findById(planId)
