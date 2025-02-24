@@ -1,6 +1,7 @@
 package bean;
 
 import java.text.DateFormatSymbols;
+import java.text.DecimalFormat;
 import java.text.MessageFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
@@ -63,6 +64,14 @@ public class TranslationBean {
 
 		public String getMonth(final int index) {
 			return DateFormatSymbols.getInstance(request.getLocale()).getMonths()[index];
+		}
+		
+		// h/t https://stackoverflow.com/a/5599842
+		public String formatFileSize(long size) {
+			if(size <= 0) return "0";
+		    final String[] units = new String[] { "B", "kB", "MB", "GB", "TB", "PB", "EB" };
+		    int digitGroups = (int) (Math.log10(size)/Math.log10(1024));
+		    return new DecimalFormat("#,##0.#").format(size/Math.pow(1024, digitGroups)) + " " + units[digitGroups];
 		}
 	}
 }

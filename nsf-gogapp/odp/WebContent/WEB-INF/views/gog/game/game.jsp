@@ -4,24 +4,60 @@
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <t:layout>
-	<h2>Game</h2>
+	<h2><c:out value="${translation.gogGame}"/></h2>
 	
 	<dl>
-		<dt>Title</dt>
+		<dt><c:out value="${translation.gameTitle}"/></dt>
 		<dd><c:out value="${details.title}"/></dd>
 		
-		<dt>Downloads</dt>
-		<dd><c:out value="${details.downloads}"/></dd>
-		
-		<dt>Extras</dt>
+		<dt><c:out value="${translation.downloads}"/></dt>
 		<dd>
-			<ul>
-				<c:forEach items="${details.extras}" var="extra">
-					<li>
-						<a href="https://gog.com${extra.manualUrl}"><c:out value="${extra.name}"/></a>
-					</li>
+			<table>
+				<thead>
+					<tr>
+						<th><c:out value="${translation.operatingSystem}"/></th>
+						<th><c:out value="${translation.language}"/></th>
+						<th><c:out value="${translation.name}"/></th>
+						<th><c:out value="${translation.version}"/></th>
+						<th><c:out value="${translation.uploadDate}"/></th>
+						<th><c:out value="${translation.size}"/></th>
+					</tr>
+				</thead>
+				<tbody>
+				<c:forEach items="${details.getParsedDownloads()}" var="entry">
+					<tr>
+						<td><c:out value="${entry.os}"/></td>
+						<td><c:out value="${entry.language}"/></td>
+						<td><c:out value="${entry.download.name}"/></td>
+						<td><c:out value="${entry.download.version}"/></td>
+						<td><c:out value="${entry.download.date}"/></td>
+						<td><c:out value="${entry.download.size}"/></td>
+					</tr>
 				</c:forEach>
-			</ul>
+				</tbody>
+			</table>
+		</dd>
+		
+		<dt><c:out value="${translation.extras}"/></dt>
+		<dd>
+			<table>
+				<thead>
+					<tr>
+						<th><c:out value="${translation.name}"/></th>
+						<th><c:out value="${translation.type}"/></th>
+						<th><c:out value="${translation.size}"/></th>
+					</tr>
+				</thead>
+				<tbody>
+				<c:forEach items="${details.extras}" var="extra">
+					<tr>
+						<td><c:out value="${extra.name}"/></td>
+						<td><c:out value="${extra.type}"/></td>
+						<td><c:out value="${extra.size}"/></td>
+					</tr>
+				</c:forEach>
+				</tbody>
+			</table>
 		</dd>
 	</dl>
 	

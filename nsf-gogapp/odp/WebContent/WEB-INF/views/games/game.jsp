@@ -17,55 +17,63 @@
 		</header>
 		
 		<dl>
-			<dt>Installers</dt>
+			<dt><c:out value="${translation.installers}"/></dt>
 			<dd>
 				<table>
 				<thead>
 					<tr>
-						<th>Name</th>
-						<th>OS</th>
-						<th>Language</th>
-						<th></th>
+						<th><c:out value="${translation.name}"/></th>
+						<th><c:out value="${translation.operatingSystem}"/></th>
+						<th><c:out value="${translation.language}"/></th>
+						<th class="col-size"><c:out value="${translation.size}"/></th>
+						<th class="col-download"></th>
 					</tr>
 				</thead>
 				<tbody>
 					<c:forEach items="${game.getInstallers()}" var="installer">
+					<c:forEach items="${installer.attachments}" var="att">
 					<tr>
 						<td><c:out value="${installer.name}"/></td>
 						<td><c:out value="${installer.os}"/></td>
 						<td><c:out value="${installer.language}"/></td>
-						<td>
-							<c:forEach items="${installer.attachments}" var="att">
-								<a href="${mvc.basePath}/api/installers/${installer.documentId}/${encoder.urlEncode(att.name)}">Download</a>
-							</c:forEach>
+						<td class="col-size"><c:out value="${messages.formatFileSize(att.length)}"/></td>
+						<td class="col-download">
+							<a href="${mvc.basePath}/api/installers/${installer.documentId}/${encoder.urlEncode(att.name)}">
+								<c:out value="${translation.download}"/>
+							</a>
 						</td>
 					</tr>
+					</c:forEach>
 					</c:forEach>
 				</tbody>
 				</table>
 			</dd>
 			
-			<dt>Extras</dt>
+			<dt><c:out value="${translation.extras}"/></dt>
 			<dd>
 				<table>
 				<thead>
 					<tr>
-						<th>Name</th>
-						<th>Type</th>
-						<th></th>
+						<th><c:out value="${translation.name}"/></th>
+						<th><c:out value="${translation.type}"/></th>
+						<th class="col-size"><c:out value="${translation.size}"/></th>
+						<th class="col-download"></th>
 					</tr>
 				</thead>
 				<tbody>
 					<c:forEach items="${game.getGameExtras()}" var="extra">
+					<c:forEach items="${extra.attachments}" var="att">
 					<tr>
 						<td><c:out value="${extra.name}"/></td>
 						<td><c:out value="${extra.type}"/></td>
-						<td>
-							<c:forEach items="${extra.attachments}" var="att">
-								<a href="${mvc.basePath}/api/extras/${extra.documentId}/${encoder.urlEncode(att.name)}">Download</a>
-							</c:forEach>
+						<td class="col-size"><c:out value="${messages.formatFileSize(att.length)}"/></td>
+						<td class="col-download">
+							<a href="${mvc.basePath}/api/extras/${extra.documentId}/${encoder.urlEncode(att.name)}">
+								<c:out value="${translation.download}"/>
+							</a>
 						</td>
 					</tr>
+					</c:forEach>
 					</c:forEach>
 				</tbody>
 				</table>

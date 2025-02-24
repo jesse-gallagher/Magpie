@@ -16,7 +16,6 @@ import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
@@ -35,12 +34,6 @@ import api.gog.GogAuthApi.GrantType;
 import api.gog.model.GameDetails;
 import api.gog.model.GameDownload;
 import api.gog.model.TokenResponse;
-import jakarta.json.JsonArray;
-import jakarta.json.JsonObject;
-import jakarta.json.JsonString;
-import jakarta.json.JsonValue;
-import jakarta.json.JsonValue.ValueType;
-import jakarta.json.bind.Jsonb;
 import jakarta.ws.rs.core.HttpHeaders;
 import model.Game;
 import model.GameDownloadPlan;
@@ -54,8 +47,6 @@ public class DownloadGameTask implements Runnable {
 	
 	private final UserToken userToken;
 	
-	private final Jsonb jsonb;
-	
 	private GameDownloadPlan plan;
 	private final GameDownloadPlan.Repository planRepository;
 	private final Game.Repository gameRepository;
@@ -63,10 +54,9 @@ public class DownloadGameTask implements Runnable {
 	private final GameExtra.Repository gameExtraRepository;
 	private final GameMetadata.Repository metadataRepository;
 	
-	public DownloadGameTask(GameDownloadPlan plan, UserToken userToken, Jsonb jsonb, GameDownloadPlan.Repository planRepository, Game.Repository gameRepository, Installer.Repository installerRepository, GameExtra.Repository gameExtraRepository, GameMetadata.Repository metadataRepository) {
+	public DownloadGameTask(GameDownloadPlan plan, UserToken userToken, GameDownloadPlan.Repository planRepository, Game.Repository gameRepository, Installer.Repository installerRepository, GameExtra.Repository gameExtraRepository, GameMetadata.Repository metadataRepository) {
 		this.plan = plan;
 		this.userToken = userToken;
-		this.jsonb = jsonb;
 		this.planRepository = planRepository;
 		this.gameRepository = gameRepository;
 		this.installerRepository = installerRepository;
@@ -108,29 +98,8 @@ public class DownloadGameTask implements Runnable {
 			
 			details.extras().forEach(extra -> this.downloadExtra(authToken, game.documentId(), extra));
 			
-			JsonArray downloads = details.downloads();
-			String language = null;
-			for(JsonValue value : downloads) {
-				if(value.getValueType() == ValueType.ARRAY) {
-					for(JsonValue innerValue : value.asJsonArray()) {
-						if(innerValue.getValueType() == ValueType.STRING) {
-							language = ((JsonString)innerValue).getString();
-						} else if(innerValue.getValueType() == ValueType.OBJECT) {
-							// Then it's a Map of OS -> Download[]
-							JsonObject obj = innerValue.asJsonObject();
-							for(Map.Entry<String, JsonValue> entry : obj.entrySet()) {
-								String os = entry.getKey();
-								for(JsonValue downloadValue : entry.getValue().asJsonArray()) {
-									GameDownload download = jsonb.fromJson(downloadValue.asJsonObject().toString(), GameDownload.class);
-									
-									String fLanguage = language;
-									this.downloadInstaller(authToken, game.documentId(), fLanguage, os, download);
-								}
-							}
-						}
-					}
-				}
-			}
+			details.getParsedDownloads()
+				.forEach(entry -> this.downloadInstaller(authToken, game.documentId(), entry.language(), entry.os(), entry.download()));
 			
 			plan.setState(GameDownloadPlan.State.Complete);
 			plan = planRepository.save(plan, true);
@@ -196,7 +165,7 @@ public class DownloadGameTask implements Runnable {
 
 	private void downloadInstaller(String authToken, String gameDocumentId, String language, String os, GameDownload download) {
 		downloadAndDelete(authToken, download.manualUrl(), tempFile -> {
-			Installer installer = new Installer(null, gameDocumentId, download.name(), language, os, download.manualUrl(), List.of(EntityAttachment.of(tempFile)));
+			Installer installer = new Installer(null, gameDocumentId, download.name(), language, os, download.manualUrl(), download.version(), download.date(), List.of(EntityAttachment.of(tempFile)));
 			installer = installerRepository.save(installer, true);
 			
 			plan.addInstaller(installer);

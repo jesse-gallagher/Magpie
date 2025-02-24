@@ -1,11 +1,16 @@
 package model;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.Optional;
 
 import org.openntf.xsp.jakarta.nosql.mapping.extension.DominoRepository;
 import org.openntf.xsp.jakarta.nosql.mapping.extension.RepositoryProvider;
 
+import com.ibm.commons.util.StringUtil;
+
+import jakarta.enterprise.inject.spi.CDI;
 import jakarta.nosql.Column;
 import jakarta.nosql.Entity;
 import jakarta.nosql.Id;
@@ -72,7 +77,8 @@ public class GameDownloadPlan {
 	}
 	
 	public List<String> getExtraIds() {
-		return extraIds;
+		List<String> ids = this.extraIds;
+		return ids == null ? Collections.emptyList() : ids;
 	}
 	public void setExtraIds(List<String> extraIds) {
 		this.extraIds = extraIds;
@@ -85,9 +91,17 @@ public class GameDownloadPlan {
 		extraIds.add(gameExtra.documentId());
 		this.extraIds = extraIds;
 	}
+	public List<GameExtra> getExtras() {
+		GameExtra.Repository repo = CDI.current().select(GameExtra.Repository.class).get();
+		return this.getExtraIds().stream()
+			.map(repo::findById)
+			.map(Optional::get)
+			.toList();
+	}
 	
 	public List<String> getInstallerIds() {
-		return installerIds;
+		List<String> ids = this.installerIds;
+		return ids == null ? Collections.emptyList() : ids;
 	}
 	public void setInstallerIds(List<String> installerIds) {
 		this.installerIds = installerIds;
@@ -99,6 +113,22 @@ public class GameDownloadPlan {
 		}
 		installerIds.add(installer.documentId());
 		this.installerIds = installerIds;
+	}
+	public List<Installer> getInstallers() {
+		Installer.Repository repo = CDI.current().select(Installer.Repository.class).get();
+		return this.getInstallerIds().stream()
+			.map(repo::findById)
+			.map(Optional::get)
+			.toList();
+	}
+	
+	public Optional<Game> getGame() {
+		String id = this.gameDocumentId;
+		if(StringUtil.isEmpty(id)) {
+			return Optional.empty();
+		}
+		Game.Repository repo = CDI.current().select(Game.Repository.class).get();
+		return repo.findById(id);
 	}
 	
 }

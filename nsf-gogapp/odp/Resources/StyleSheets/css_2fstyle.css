@@ -163,4 +163,11 @@ details.expanding-form {
 			figure { grid-area: image }
 		}
 	}
+	
+	td.col-size {
+		width: 12rem;
+	}
+	td.col-download {
+		width: 15rem;
+	}
 }

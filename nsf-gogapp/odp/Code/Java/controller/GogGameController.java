@@ -15,7 +15,6 @@ import api.gog.model.TokenResponse;
 import jakarta.enterprise.concurrent.ManagedExecutorService;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
-import jakarta.json.bind.Jsonb;
 import jakarta.mvc.Controller;
 import jakarta.mvc.Models;
 import jakarta.ws.rs.FormParam;
@@ -68,9 +67,6 @@ public class GogGameController {
 	
 	@Inject @Named("java:comp/DefaultManagedExecutorService")
 	private ManagedExecutorService exec;
-	
-	@Inject
-	private Jsonb jsonb;
 	
 	@Path("search")
 	@POST
@@ -140,11 +136,11 @@ public class GogGameController {
 	public String downloadGame(@FormParam("gameId") int gameId, @FormParam("tokenId") String tokenId) {
 		GameDownloadPlan plan = new GameDownloadPlan();
 		plan.setGameId(gameId);
-		plan = gameDownloadPlanRepository.save(plan);
+		plan = gameDownloadPlanRepository.save(plan, true);
 
 		UserToken token = tokenRepository.findById(tokenId)
 			.orElseThrow(() -> new IllegalArgumentException(MessageFormat.format("Could not find token for ID {0}", tokenId)));
-		exec.submit(new DownloadGameTask(plan, token, jsonb, gameDownloadPlanRepository, gameRepository, installerRepository, gameExtraRepository, metadataRepository));
+		exec.submit(new DownloadGameTask(plan, token, gameDownloadPlanRepository, gameRepository, installerRepository, gameExtraRepository, metadataRepository));
 		
 		return "redirect:gog/game/download/" + plan.getDocumentId();
 	}
