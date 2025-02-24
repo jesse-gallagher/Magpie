@@ -11,11 +11,13 @@ import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.nio.file.Files;
+import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
 import java.util.logging.Level;
@@ -98,27 +100,7 @@ public class DownloadGameTask implements Runnable {
 			GameDetails details = accountApi.getGameDetails("Bearer " + authToken, plan.getGameId());
 			
 			
-			Game game = gameRepository.findByTitle(details.title()).orElseGet(() -> {
-				// See if we have an image for it in our metadata and download if so
-				List<EntityAttachment> attachments = new ArrayList<>();
-				AtomicReference<Game> gameRef = new AtomicReference<Game>(null);
-				metadataRepository.findByGameId(ViewQuery.query().key(plan.getGameId(), true)).ifPresentOrElse(metadata -> {
-					if(StringUtil.isNotEmpty(metadata.imageUrl())) {
-						download(authToken, metadata.imageUrl() + ".webp", p -> {
-							p.getFileName().toString();
-							attachments.add(EntityAttachment.of(p));
-							Game newGame = new Game(null, details.title(), plan.getGameId(), p.getFileName().toString(), attachments);
-							gameRef.set(gameRepository.save(newGame, true));
-						});
-					}
-				}, () -> {
-					Game newGame = new Game(null, details.title(), plan.getGameId(), null, null);
-					gameRef.set(gameRepository.save(newGame, true));
-				});
-				
-				return gameRef.get();
-				
-			});
+			Game game = findOrCreateGame(authToken, details);
 			
 			plan.setGameDocumentId(game.documentId());
 			plan.setState(GameDownloadPlan.State.InProgress);
@@ -169,9 +151,51 @@ public class DownloadGameTask implements Runnable {
 			planRepository.save(plan, true);
 		}
 	}
+	
+	private Game findOrCreateGame(String authToken, GameDetails details) {
+		return gameRepository.findByTitle(details.title()).orElseGet(() -> {
+
+			List<Path> tempFiles = new ArrayList<>();
+			try {
+				// See if we have an image for it in our metadata and download if so
+				List<EntityAttachment> attachments = new ArrayList<>();
+				
+				AtomicReference<String> imageFileName = new AtomicReference<>(null);
+				AtomicReference<String> backgroundFileName = new AtomicReference<>(null);
+				
+				Optional<GameMetadata> gameMetadata = metadataRepository.findByGameId(ViewQuery.query().key(plan.getGameId(), true));
+				if(gameMetadata.isPresent()) {
+					if(StringUtil.isNotEmpty(gameMetadata.get().imageUrl())) {
+						Path p = download(authToken, gameMetadata.get().imageUrl() + ".webp", "image.webp");
+						imageFileName.set(p.getFileName().toString());
+						attachments.add(EntityAttachment.of(p));
+						tempFiles.add(p);
+					}
+				}
+				
+				if(StringUtil.isNotEmpty(details.backgroundImage())) {
+					Path p = download(authToken, details.backgroundImage() + ".webp", "background.webp");
+					backgroundFileName.set(p.getFileName().toString());
+					attachments.add(EntityAttachment.of(p));
+					tempFiles.add(p);
+				}
+				
+				return gameRepository.save(new Game(null, details.title(), plan.getGameId(), details.cdKey(), imageFileName.get(), backgroundFileName.get(), attachments), true);
+			} finally {
+				tempFiles.forEach(p -> {
+					try {
+						Files.deleteIfExists(p);
+						Files.deleteIfExists(p.getParent());
+					} catch(IOException e) {
+						// Ignore
+					}
+				});
+			}
+		});
+	}
 
 	private void downloadInstaller(String authToken, String gameDocumentId, String language, String os, GameDownload download) {
-		download(authToken, download.manualUrl(), tempFile -> {
+		downloadAndDelete(authToken, download.manualUrl(), tempFile -> {
 			Installer installer = new Installer(null, gameDocumentId, download.name(), language, os, List.of(EntityAttachment.of(tempFile)));
 			installer = installerRepository.save(installer, true);
 			
@@ -181,7 +205,7 @@ public class DownloadGameTask implements Runnable {
 	}
 	
 	private void downloadExtra(String authToken, String gameDocumentId, api.gog.model.GameExtra extra) {
-		download(authToken, extra.manualUrl(), tempFile -> {
+		downloadAndDelete(authToken, extra.manualUrl(), tempFile -> {
 			GameExtra gameExtra = new GameExtra(null, gameDocumentId, extra.name(), extra.type(), List.of(EntityAttachment.of(tempFile)));
 			gameExtra = gameExtraRepository.save(gameExtra, true);
 			
@@ -190,13 +214,11 @@ public class DownloadGameTask implements Runnable {
 		});
 	}
 	
-
-	private void download(String authToken, String manualUrl, Consumer<java.nio.file.Path> callback) {
+	private Path download(String authToken, String manualUrl, String destFileName) {
 		try(HttpClient http = HttpClient.newBuilder().followRedirects(Redirect.ALWAYS).build()) {
 			URI baseUri = URI.create("https://gog.com/");
 			
 			URI attUri = baseUri.resolve(manualUrl);
-			System.out.println("downloading " + attUri);
 			
 			HttpRequest req = HttpRequest.newBuilder(attUri)
 				.header(HttpHeaders.AUTHORIZATION, "Bearer " + authToken)
@@ -206,27 +228,43 @@ public class DownloadGameTask implements Runnable {
 				HttpResponse<InputStream> resp = http.send(req, BodyHandlers.ofInputStream());
 				String finalUri = resp.uri().toString();
 				int slashIndex = finalUri.lastIndexOf('/');
-				String fileName = finalUri.substring(slashIndex+1)
-					.replace('%', '_')
-					.replace('/', '_')
-					.replace('\\', '_');
+				String fileName = destFileName;
+				if(StringUtil.isEmpty(fileName)) {
+					fileName = finalUri.substring(slashIndex+1)
+						.replace('%', '_')
+						.replace('/', '_')
+						.replace('\\', '_');
+				}
 				
 				java.nio.file.Path tempDir = Files.createTempDirectory(getClass().getName());
 				java.nio.file.Path tempFile = tempDir.resolve(fileName);
 				
-				try {
-					try(InputStream is = resp.body()) {
-						Files.copy(is, tempFile, StandardCopyOption.REPLACE_EXISTING);
-					}
-					
-					callback.accept(tempFile);
-				} finally {
-					Files.deleteIfExists(tempFile);
-					Files.deleteIfExists(tempDir);
+				try(InputStream is = resp.body()) {
+					Files.copy(is, tempFile, StandardCopyOption.REPLACE_EXISTING);
 				}
+				return tempFile;
 			} catch(Exception e) {
 				throw new RuntimeException(e);
 			}
+		}
+	}
+	
+
+	private void downloadAndDelete(String authToken, String manualUrl, Consumer<Path> callback) {
+		try {
+			Path tempFile = null;
+			try {
+				tempFile = download(authToken, manualUrl, null);
+				
+				callback.accept(tempFile);
+			} finally {
+				if(tempFile != null) {
+					Files.deleteIfExists(tempFile);
+					Files.deleteIfExists(tempFile.getParent());
+				}
+			}
+		} catch(Exception e) {
+			throw new RuntimeException(e);
 		}
 	}
 }

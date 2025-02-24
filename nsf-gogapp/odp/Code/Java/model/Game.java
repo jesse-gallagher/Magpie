@@ -22,7 +22,9 @@ public record Game(
 	@Id String documentId,
 	@Column String title,
 	@Column int id,
+	@Column String cdKey,
 	@Column String imageFileName,
+	@Column String backgroundImageFileName,
 	@Column(DominoConstants.FIELD_ATTACHMENTS) List<EntityAttachment> attachments
 ) {
 	@RepositoryProvider("storage")

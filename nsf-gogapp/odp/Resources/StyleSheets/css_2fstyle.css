@@ -19,6 +19,12 @@ figure.game-logo {
 	width: 200px;
 }
 
+article.game-display {
+	background-repeat: no-repeat;
+	background-size: contain;
+	background-color: #CCCCCC;
+}
+
 #main-nav {
 	grid-area: nav;
 	background-color: #8700B1;
@@ -46,6 +52,17 @@ figure.game-logo {
 
 #main-body {
 	grid-area: main;
+}
+
+.gallery {
+	display: flex;
+	flex-direction: row;
+	flex-wrap: wrap;
+	gap: 1em;
+	
+	article {
+		width: 275px;
+	}
 }
 
 fieldset {
@@ -121,5 +138,20 @@ fieldset {
 	#main-body {
 		overflow: auto;
 		padding: 2em;
+	}
+	
+	article.game-display {
+		padding: 5rem;
+		padding-top: 20rem;
+		color: black;
+	
+		header {
+			display: grid;
+			grid-template-columns: 250px 1fr;
+			grid-template-areas: "image title";
+			
+			h2 { grid-area: title }
+			figure { grid-area: image }
+		}
 	}
 }

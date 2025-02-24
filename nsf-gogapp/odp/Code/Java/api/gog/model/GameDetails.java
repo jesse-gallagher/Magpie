@@ -7,6 +7,7 @@ import jakarta.json.JsonArray;
 public record GameDetails(
 	String title,
 	String backgroundImage,
+	String cdKey,
 	JsonArray downloads,
 	List<GameExtra> extras
 ) {}

@@ -6,14 +6,15 @@
 <t:layout>
 	<h2>Search Results</h2>
 	
-	<ul class="product-list">
+	
+	<section class="gallery">
 	<c:forEach items="${result.products}" var="product">
-		<li>
+		<article>
 			<figure>
-				<img src="${product.image}.webp" style="" />
+				<a href="${mvc.basePath}/game/${product.id}"><img src="${product.image}.webp" style="" /></a>
 				<figcaption><a href="${mvc.basePath}/game/${product.id}"><c:out value="${product.title}"/></a></figcaption>
 			</figure>
-		</li>
+		</article>
 	</c:forEach>
-	</ul>
+	</section>
 </t:layout>
