@@ -21,6 +21,7 @@ public record Installer(
 	@Column String name,
 	@Column String language,
 	@Column String os,
+	@Column String url,
 	@Column(DominoConstants.FIELD_ATTACHMENTS) List<EntityAttachment> attachments
 ) {
 

@@ -20,6 +20,7 @@ public record GameExtra(
 	@Column(DominoConstants.FIELD_PARENTUNID) String parentDocumentId,
 	@Column String name,
 	@Column String type,
+	@Column String url,
 	@Column(DominoConstants.FIELD_ATTACHMENTS) List<EntityAttachment> attachments
 ) {
 	@RepositoryProvider("storage")

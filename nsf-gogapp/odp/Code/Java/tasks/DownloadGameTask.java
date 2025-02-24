@@ -196,7 +196,7 @@ public class DownloadGameTask implements Runnable {
 
 	private void downloadInstaller(String authToken, String gameDocumentId, String language, String os, GameDownload download) {
 		downloadAndDelete(authToken, download.manualUrl(), tempFile -> {
-			Installer installer = new Installer(null, gameDocumentId, download.name(), language, os, List.of(EntityAttachment.of(tempFile)));
+			Installer installer = new Installer(null, gameDocumentId, download.name(), language, os, download.manualUrl(), List.of(EntityAttachment.of(tempFile)));
 			installer = installerRepository.save(installer, true);
 			
 			plan.addInstaller(installer);
@@ -206,7 +206,7 @@ public class DownloadGameTask implements Runnable {
 	
 	private void downloadExtra(String authToken, String gameDocumentId, api.gog.model.GameExtra extra) {
 		downloadAndDelete(authToken, extra.manualUrl(), tempFile -> {
-			GameExtra gameExtra = new GameExtra(null, gameDocumentId, extra.name(), extra.type(), List.of(EntityAttachment.of(tempFile)));
+			GameExtra gameExtra = new GameExtra(null, gameDocumentId, extra.name(), extra.type(), extra.manualUrl(), List.of(EntityAttachment.of(tempFile)));
 			gameExtra = gameExtraRepository.save(gameExtra, true);
 			
 			plan.addExtra(gameExtra);
