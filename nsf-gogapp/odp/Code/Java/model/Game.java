@@ -1,5 +1,6 @@
 package model;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -26,6 +27,7 @@ public record Game(
 	@Column String imageFileName,
 	@Column String backgroundImageFileName,
 	@Column String category,
+	@Column LocalDate releaseDate,
 	@Column(DominoConstants.FIELD_ATTACHMENTS) List<EntityAttachment> attachments
 ) {
 	@RepositoryProvider("storage")

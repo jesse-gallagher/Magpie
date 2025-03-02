@@ -10,6 +10,14 @@
 		<dt><c:out value="${translation.gameTitle}"/></dt>
 		<dd><c:out value="${details.title}"/></dd>
 		
+		<dt><c:out value="${translation.releaseDate}"/></dt>
+		<dd><c:out value="${empty metadata or empty metadata.releaseDate ? '' : metadata.releaseDate}"/></dd>
+		
+		<c:if test="${not empty details.cdKey}">
+		<dt><c:out value="${translation.cdKey}"/></dt>
+		<dd><c:out value="${details.cdKey}" escapeXml="false"/></dd>
+		</c:if>
+		
 		<dt><c:out value="${translation.downloads}"/></dt>
 		<dd>
 			<table>

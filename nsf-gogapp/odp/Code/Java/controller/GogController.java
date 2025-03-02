@@ -128,6 +128,9 @@ public class GogController {
 		models.put("tokenId", tokenId);
 		models.put("details", details);
 		
+		Optional<GameMetadata> existing = metadataRepository.findByGameId(ViewQuery.query().key(gameId, true));
+		models.put("metadata", existing.orElse(null));
+		
 		return "gog/game/game.jsp";
 	}
 	

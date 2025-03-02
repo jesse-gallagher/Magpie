@@ -17,6 +17,14 @@
 		</header>
 		
 		<dl>
+			<dt><c:out value="${translation.releaseDate}"/></dt>
+			<dd><c:out value="${game.releaseDate}"/></dd>
+			
+			<c:if test="${not empty game.cdKey}">
+			<dt><c:out value="${translation.cdKey}"/></dt>
+			<dd><c:out value="${game.cdKey}" escapeXml="false"/></dd>
+			</c:if>
+		
 			<dt><c:out value="${translation.installers}"/></dt>
 			<dd>
 				<table>

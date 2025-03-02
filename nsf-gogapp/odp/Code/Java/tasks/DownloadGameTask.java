@@ -14,6 +14,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
@@ -140,6 +141,7 @@ public class DownloadGameTask implements Runnable {
 				AtomicReference<String> backgroundFileName = new AtomicReference<>(null);
 				
 				String category = "";
+				LocalDate releaseDate = null;
 				Optional<GameMetadata> gameMetadata = metadataRepository.findByGameId(ViewQuery.query().key(plan.getGameId(), true));
 				if(gameMetadata.isPresent()) {
 					if(StringUtil.isNotEmpty(gameMetadata.get().imageUrl())) {
@@ -149,6 +151,7 @@ public class DownloadGameTask implements Runnable {
 						tempFiles.add(p);
 					}
 					category = gameMetadata.get().category();
+					releaseDate = gameMetadata.get().releaseDate();
 				}
 				
 				if(StringUtil.isNotEmpty(details.backgroundImage())) {
@@ -158,7 +161,7 @@ public class DownloadGameTask implements Runnable {
 					tempFiles.add(p);
 				}
 				
-				return gameRepository.save(new Game(null, details.title(), plan.getGameId(), details.cdKey(), imageFileName.get(), backgroundFileName.get(), category, attachments), true);
+				return gameRepository.save(new Game(null, details.title(), plan.getGameId(), details.cdKey(), imageFileName.get(), backgroundFileName.get(), category, releaseDate, attachments), true);
 			} finally {
 				tempFiles.forEach(p -> {
 					try {
