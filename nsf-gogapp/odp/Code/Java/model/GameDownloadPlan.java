@@ -37,7 +37,11 @@ public class GameDownloadPlan {
 	@Column
 	private String gameDocumentId;
 	@Column
+	private List<String> installerUrls;
+	@Column
 	private List<String> installerIds;
+	@Column
+	private List<String> extraUrls;
 	@Column
 	private List<String> extraIds;
 	
@@ -76,6 +80,13 @@ public class GameDownloadPlan {
 		this.gameDocumentId = gameDocumentId;
 	}
 	
+	public List<String> getExtraUrls() {
+		return extraUrls;
+	}
+	public void setExtraUrls(List<String> extraUrls) {
+		this.extraUrls = extraUrls;
+	}
+	
 	public List<String> getExtraIds() {
 		List<String> ids = this.extraIds;
 		return ids == null ? Collections.emptyList() : ids;
@@ -97,6 +108,13 @@ public class GameDownloadPlan {
 			.map(repo::findById)
 			.map(Optional::get)
 			.toList();
+	}
+	
+	public List<String> getInstallerUrls() {
+		return installerUrls;
+	}
+	public void setInstallerUrls(List<String> installerUrls) {
+		this.installerUrls = installerUrls;
 	}
 	
 	public List<String> getInstallerIds() {

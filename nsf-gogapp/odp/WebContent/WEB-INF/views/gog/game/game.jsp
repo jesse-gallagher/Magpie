@@ -31,7 +31,7 @@
 						<td><c:out value="${entry.download.name}"/></td>
 						<td><c:out value="${entry.download.version}"/></td>
 						<td><c:out value="${entry.download.date}"/></td>
-						<td><c:out value="${entry.download.size}"/></td>
+						<td><c:out value="${messages.formatFileSize(entry.download.sizeBytes)}"/></td>
 					</tr>
 				</c:forEach>
 				</tbody>
@@ -53,7 +53,7 @@
 					<tr>
 						<td><c:out value="${extra.name}"/></td>
 						<td><c:out value="${extra.type}"/></td>
-						<td><c:out value="${extra.size}"/></td>
+						<td><c:out value="${messages.formatFileSize(extra.sizeBytes)}"/></td>
 					</tr>
 				</c:forEach>
 				</tbody>

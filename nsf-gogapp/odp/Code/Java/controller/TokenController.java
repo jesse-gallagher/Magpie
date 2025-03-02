@@ -60,6 +60,7 @@ public class TokenController {
 		
 		UserToken token = new UserToken();
 		
+		token.setServiceType("gog");
 		token.setUserId(response.userId());
 		token.setAuthorizationCode(code);
 		token.setAccessToken(response.accessToken());

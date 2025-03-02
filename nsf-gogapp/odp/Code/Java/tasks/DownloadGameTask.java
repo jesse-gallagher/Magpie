@@ -32,8 +32,14 @@ import api.gog.GogAccountApi;
 import api.gog.GogAuthApi;
 import api.gog.GogAuthApi.GrantType;
 import api.gog.model.GameDetails;
+import api.gog.model.GameDetails.DownloadEntry;
 import api.gog.model.GameDownload;
 import api.gog.model.TokenResponse;
+import event.DownloadEndEvent;
+import event.DownloadStartEvent;
+import jakarta.enterprise.event.Event;
+import jakarta.enterprise.inject.spi.CDI;
+import jakarta.enterprise.util.TypeLiteral;
 import jakarta.ws.rs.core.HttpHeaders;
 import model.Game;
 import model.GameDownloadPlan;
@@ -89,11 +95,12 @@ public class DownloadGameTask implements Runnable {
 			
 			GameDetails details = accountApi.getGameDetails("Bearer " + authToken, plan.getGameId());
 			
-			
 			Game game = findOrCreateGame(authToken, details);
-			
+			plan.setExtraUrls(details.extras().stream().map(api.gog.model.GameExtra::manualUrl).toList());
+			plan.setInstallerUrls(details.getParsedDownloads().stream().map(DownloadEntry::download).map(GameDownload::manualUrl).toList());
 			plan.setGameDocumentId(game.documentId());
 			plan.setState(GameDownloadPlan.State.InProgress);
+			
 			plan = planRepository.save(plan, true);
 			
 			details.extras().forEach(extra -> this.downloadExtra(authToken, game.documentId(), extra));
@@ -164,22 +171,38 @@ public class DownloadGameTask implements Runnable {
 	}
 
 	private void downloadInstaller(String authToken, String gameDocumentId, String language, String os, GameDownload download) {
+		@SuppressWarnings("serial")
+		Event<DownloadStartEvent> event = CDI.current().select(new TypeLiteral<Event<DownloadStartEvent>>() {}).get();
+		event.fire(new DownloadStartEvent(plan, Installer.class, download));
+		
 		downloadAndDelete(authToken, download.manualUrl(), tempFile -> {
 			Installer installer = new Installer(null, gameDocumentId, download.name(), language, os, download.manualUrl(), download.version(), download.date(), List.of(EntityAttachment.of(tempFile)));
 			installer = installerRepository.save(installer, true);
 			
 			plan.addInstaller(installer);
 			plan = planRepository.save(plan, true);
+
+			@SuppressWarnings("serial")
+			Event<DownloadEndEvent> event2 = CDI.current().select(new TypeLiteral<Event<DownloadEndEvent>>() {}).get();
+			event2.fire(new DownloadEndEvent(plan, Installer.class, download));
 		});
 	}
 	
 	private void downloadExtra(String authToken, String gameDocumentId, api.gog.model.GameExtra extra) {
+		@SuppressWarnings("serial")
+		Event<DownloadStartEvent> event = CDI.current().select(new TypeLiteral<Event<DownloadStartEvent>>() {}).get();
+		event.fire(new DownloadStartEvent(plan, GameExtra.class, extra));
+		
 		downloadAndDelete(authToken, extra.manualUrl(), tempFile -> {
 			GameExtra gameExtra = new GameExtra(null, gameDocumentId, extra.name(), extra.type(), extra.manualUrl(), List.of(EntityAttachment.of(tempFile)));
 			gameExtra = gameExtraRepository.save(gameExtra, true);
 			
 			plan.addExtra(gameExtra);
 			plan = planRepository.save(plan, true);
+
+			@SuppressWarnings("serial")
+			Event<DownloadEndEvent> event2 = CDI.current().select(new TypeLiteral<Event<DownloadEndEvent>>() {}).get();
+			event2.fire(new DownloadEndEvent(plan, GameExtra.class, extra));
 		});
 	}
 	
@@ -194,6 +217,7 @@ public class DownloadGameTask implements Runnable {
 				.GET()
 				.build();
 			try {
+				// TODO replace with BodyHandlers.ofFileDownload()?
 				HttpResponse<InputStream> resp = http.send(req, BodyHandlers.ofInputStream());
 				String finalUri = resp.uri().toString();
 				int slashIndex = finalUri.lastIndexOf('/');

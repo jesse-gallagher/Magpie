@@ -7,6 +7,7 @@ import org.openntf.xsp.jakarta.nosql.communication.driver.DominoConstants;
 import org.openntf.xsp.jakarta.nosql.mapping.extension.DominoRepository;
 import org.openntf.xsp.jakarta.nosql.mapping.extension.RepositoryProvider;
 import org.openntf.xsp.jakarta.nosql.mapping.extension.ViewEntries;
+import org.openntf.xsp.jakarta.nosql.mapping.extension.ViewQuery;
 
 import jakarta.nosql.Column;
 import jakarta.nosql.Entity;
@@ -18,10 +19,15 @@ public class UserToken {
 	public interface Repository extends DominoRepository<UserToken, String> {
 		@ViewEntries("User Tokens")
 		Stream<UserToken> list();
+		
+		@ViewEntries("User Tokens")
+		Stream<UserToken> findByType(ViewQuery query);
 	}
 	
 	@Id
 	private String documentId;
+	@Column
+	private String serviceType;
 	@Column
 	private String userId;
 	@Column
@@ -42,6 +48,13 @@ public class UserToken {
 	}
 	public void setDocumentId(String documentId) {
 		this.documentId = documentId;
+	}
+	
+	public String getServiceType() {
+		return serviceType;
+	}
+	public void setServiceType(String serviceType) {
+		this.serviceType = serviceType;
 	}
 	
 	public String getUserId() {

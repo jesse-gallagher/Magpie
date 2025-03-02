@@ -4,11 +4,57 @@
 <%@taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@taglib prefix="fn" uri="http://java.sun.com/jsp/jstl/functions" %>
 <t:layout>
+	<c:if test="${plan.state == 'Planned' or plan.state == 'InProgress'}">
+	<script>
+		setInterval(() => {
+			const apiUrl = "${mvc.basePath}/api/game/download/${plan.documentId}/@status";
+			fetch(apiUrl, { includeCredentials: true })
+				.then((response) => response.json())
+				.then((planStatus) => {
+					if(planStatus.plan.state === "Planned" || planStatus.plan.state === "InProgress") {
+						// Update the list
+						
+						document.getElementById("planState").innerText = planStatus.plan.state;
+
+						const ul = document.getElementById("planDownloads");
+						ul.innerHTML = "";
+						planStatus.activeDownloads.forEach((download) => {
+							const li = document.createElement("li");
+							li.innerText = download.name;
+							ul.appendChild(li);
+						});
+						
+						if(planStatus.plan.state === "InProgress") {
+							// For now, progress is just based on count of downloads, not size
+							const totalCount = planStatus.plan.installerUrls.length + planStatus.plan.extraUrls.length;
+							const completeCount = planStatus.plan.installerIds.length + planStatus.plan.extraIds.length;
+							
+							if(totalCount > 0) {
+								const progress = document.getElementById("planProgress");
+								progress.value = (completeCount / totalCount) * 100;
+								progress.innerText = ((completeCount / totalCount) * 100) + "";
+							}
+						}
+					} else {
+						// Otherwise, reload the page to show the results or exception
+						window.location = "${mvc.basePath}/library/" + encodeURIComponent(planStatus.plan.gameDocumentId);
+					}
+				});
+		}, 2500)
+	</script>
+	</c:if>
+
 	<h2><c:out value="${translation.gameDownloadPlan}"/></h2>
+	
+	
+	<c:if test="${plan.state == 'Planned' or plan.state == 'InProgress'}">
+		<progress id="planProgress" max="100"></progress>
+		<ul id="planDownloads"></ul>
+	</c:if>
 	
 	<dl>
 		<dt><c:out value="${translation.state}"/></dt>
-		<dd><c:out value="${plan.state}"/></dd>
+		<dd id="planState"><c:out value="${plan.state}"/></dd>
 	
 		<dt><c:out value="${translation.gameId}"/></dt>
 		<dd><c:out value="${plan.gameId}"/></dd>

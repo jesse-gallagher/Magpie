@@ -3,6 +3,7 @@ package bean;
 import java.text.DateFormatSymbols;
 import java.text.DecimalFormat;
 import java.text.MessageFormat;
+import java.text.NumberFormat;
 import java.util.Locale;
 import java.util.ResourceBundle;
 
@@ -27,6 +28,8 @@ public class TranslationBean {
 	@RequestScoped
 	@Named("messages")
 	public static class Messages {
+		private static final ThreadLocal<NumberFormat> SIZE_FORMAT = ThreadLocal.withInitial(() -> new DecimalFormat("#,##0.#"));
+		
 		@Inject
 		HttpServletRequest request;
 		
@@ -71,7 +74,7 @@ public class TranslationBean {
 			if(size <= 0) return "0";
 		    final String[] units = new String[] { "B", "kB", "MB", "GB", "TB", "PB", "EB" };
 		    int digitGroups = (int) (Math.log10(size)/Math.log10(1024));
-		    return new DecimalFormat("#,##0.#").format(size/Math.pow(1024, digitGroups)) + " " + units[digitGroups];
+		    return SIZE_FORMAT.get().format(size/Math.pow(1024, digitGroups)) + " " + units[digitGroups];
 		}
 	}
 }
