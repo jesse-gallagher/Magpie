@@ -25,6 +25,7 @@ public record Game(
 	@Column String cdKey,
 	@Column String imageFileName,
 	@Column String backgroundImageFileName,
+	@Column String category,
 	@Column(DominoConstants.FIELD_ATTACHMENTS) List<EntityAttachment> attachments
 ) {
 	@RepositoryProvider("storage")

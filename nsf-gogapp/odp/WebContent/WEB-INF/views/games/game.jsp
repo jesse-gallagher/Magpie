@@ -25,6 +25,7 @@
 						<th><c:out value="${translation.name}"/></th>
 						<th><c:out value="${translation.operatingSystem}"/></th>
 						<th><c:out value="${translation.language}"/></th>
+						<th><c:out value="${translation.version}"/></th>
 						<th class="col-size"><c:out value="${translation.size}"/></th>
 						<th class="col-download"></th>
 					</tr>
@@ -36,6 +37,7 @@
 						<td><c:out value="${installer.name}"/></td>
 						<td><c:out value="${installer.os}"/></td>
 						<td><c:out value="${installer.language}"/></td>
+						<td><c:out value="${installer.version}"/></td>
 						<td class="col-size"><c:out value="${messages.formatFileSize(att.length)}"/></td>
 						<td class="col-download">
 							<a href="${mvc.basePath}/api/installers/${installer.documentId}/${encoder.urlEncode(att.name)}">

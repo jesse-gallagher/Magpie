@@ -139,6 +139,7 @@ public class DownloadGameTask implements Runnable {
 				AtomicReference<String> imageFileName = new AtomicReference<>(null);
 				AtomicReference<String> backgroundFileName = new AtomicReference<>(null);
 				
+				String category = "";
 				Optional<GameMetadata> gameMetadata = metadataRepository.findByGameId(ViewQuery.query().key(plan.getGameId(), true));
 				if(gameMetadata.isPresent()) {
 					if(StringUtil.isNotEmpty(gameMetadata.get().imageUrl())) {
@@ -147,6 +148,7 @@ public class DownloadGameTask implements Runnable {
 						attachments.add(EntityAttachment.of(p));
 						tempFiles.add(p);
 					}
+					category = gameMetadata.get().category();
 				}
 				
 				if(StringUtil.isNotEmpty(details.backgroundImage())) {
@@ -156,7 +158,7 @@ public class DownloadGameTask implements Runnable {
 					tempFiles.add(p);
 				}
 				
-				return gameRepository.save(new Game(null, details.title(), plan.getGameId(), details.cdKey(), imageFileName.get(), backgroundFileName.get(), attachments), true);
+				return gameRepository.save(new Game(null, details.title(), plan.getGameId(), details.cdKey(), imageFileName.get(), backgroundFileName.get(), category, attachments), true);
 			} finally {
 				tempFiles.forEach(p -> {
 					try {

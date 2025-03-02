@@ -4,5 +4,7 @@ public record Product(
 	int id,
 	String title,
 	String image,
-	String url
+	String url,
+	String category,
+	ReleaseDate releaseDate
 ) {}
