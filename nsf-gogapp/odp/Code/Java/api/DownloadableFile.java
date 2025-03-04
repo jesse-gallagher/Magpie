@@ -1,4 +1,4 @@
-package api.gog.model;
+package api;
 
 public interface DownloadableFile {
 	String name();

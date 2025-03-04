@@ -1,5 +1,6 @@
 package api.gog.model;
 
+import api.DownloadableFile;
 import jakarta.json.bind.annotation.JsonbProperty;
 import util.AppUtil;
 

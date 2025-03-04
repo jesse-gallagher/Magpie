@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 
-import api.gog.model.DownloadableFile;
+import api.DownloadableFile;
 import event.DownloadEndEvent;
 import event.DownloadStartEvent;
 import jakarta.annotation.PostConstruct;

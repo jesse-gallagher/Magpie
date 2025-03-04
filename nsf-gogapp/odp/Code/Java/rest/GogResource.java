@@ -2,7 +2,7 @@ package rest;
 
 import java.util.List;
 
-import api.gog.model.DownloadableFile;
+import api.DownloadableFile;
 import bean.PlanProgressBean;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
