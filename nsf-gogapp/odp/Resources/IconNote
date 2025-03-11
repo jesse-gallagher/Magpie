@@ -25,18 +25,6 @@ AAAAUEECICABAAD/////+A4DgA==
   <item name="$DBTheme">
     <text>Lists.theme</text>
   </item>
-  <item name="$TITLE">
-    <text>GOG App</text>
-  </item>
-  <item name="$Daos">
-    <text>1</text>
-  </item>
-  <item name="$LargeSummary">
-    <text>0</text>
-  </item>
-  <item name="$Flags">
-    <text>J7FKzNZ4qE</text>
-  </item>
   <item name="$LaunchXPageRunOnServer">
     <text>0</text>
   </item>
@@ -48,5 +36,18 @@ AAAAUEECICABAAD/////+A4DgA==
   </item>
   <item name="$DefaultWebLaunchPage">
     <text>HomeRedir</text>
+  </item>
+  <item name="$Daos">
+    <text>1</text>
+  </item>
+  <item name="$LargeSummary">
+    <text>0</text>
+  </item>
+  <item name="$Flags">
+    <text>J7FKzNZ4qE</text>
+  </item>
+  <item name="$TITLE">
+    <text>Magpie
+</text>
   </item>
 </note>
