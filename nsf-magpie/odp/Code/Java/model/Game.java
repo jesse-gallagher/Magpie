@@ -47,4 +47,16 @@ public record Game(
 		GameExtra.Repository repo = CDI.current().select(GameExtra.Repository.class).get();
 		return repo.findByParentDocumentId(ViewQuery.query().category(documentId)).toList();
 	}
+	
+	public String getSortingTitle() {
+		// Ultima games are numbered as such, with the TM
+		return title.replace(" I\u2122", "1")
+			.replace(" II\u2122", "2")
+			.replace(" III\u2122", "3")
+			.replace(" IV\u2122", "4")
+			.replace(" V\u2122", "5")
+			.replace(" VI\u2122", "6")
+			.replace(" VII\u2122", "7")
+			.replace(" VIII\u2122", "8");
+	}
 }
