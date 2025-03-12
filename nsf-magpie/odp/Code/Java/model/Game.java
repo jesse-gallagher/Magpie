@@ -8,6 +8,7 @@ import java.util.stream.Stream;
 import org.eclipse.jnosql.communication.driver.attachment.EntityAttachment;
 import org.openntf.xsp.jakarta.nosql.communication.driver.DominoConstants;
 import org.openntf.xsp.jakarta.nosql.mapping.extension.DominoRepository;
+import org.openntf.xsp.jakarta.nosql.mapping.extension.ItemStorage;
 import org.openntf.xsp.jakarta.nosql.mapping.extension.RepositoryProvider;
 import org.openntf.xsp.jakarta.nosql.mapping.extension.ViewEntries;
 import org.openntf.xsp.jakarta.nosql.mapping.extension.ViewQuery;
@@ -28,6 +29,8 @@ public record Game(
 	@Column String backgroundImageFileName,
 	@Column String category,
 	@Column LocalDate releaseDate,
+	@Column String sortingTitle,
+	@Column("$EffectiveSort") @ItemStorage(updatable = false) String effectiveSort,
 	@Column(DominoConstants.FIELD_ATTACHMENTS) List<EntityAttachment> attachments
 ) {
 	@RepositoryProvider("storage")
@@ -46,17 +49,5 @@ public record Game(
 	public List<GameExtra> getGameExtras() {
 		GameExtra.Repository repo = CDI.current().select(GameExtra.Repository.class).get();
 		return repo.findByParentDocumentId(ViewQuery.query().category(documentId)).toList();
-	}
-	
-	public String getSortingTitle() {
-		// Ultima games are numbered as such, with the TM
-		return title.replace(" I\u2122", "1")
-			.replace(" II\u2122", "2")
-			.replace(" III\u2122", "3")
-			.replace(" IV\u2122", "4")
-			.replace(" V\u2122", "5")
-			.replace(" VI\u2122", "6")
-			.replace(" VII\u2122", "7")
-			.replace(" VIII\u2122", "8");
 	}
 }

@@ -1,6 +1,5 @@
 package controller;
 
-import java.util.Comparator;
 import java.util.List;
 
 import jakarta.data.Sort;
@@ -28,8 +27,7 @@ public class LibraryController {
 	@GET
 	@Produces(MediaType.TEXT_HTML)
 	public String list() {
-		List<Game> games = gameRepository.list(Sort.asc("title"))
-			.sorted(Comparator.comparing(Game::getSortingTitle))
+		List<Game> games = gameRepository.list(Sort.asc("effectiveSort"))
 			.toList();
 		models.put("games", games);
 		return "games/library.jsp";

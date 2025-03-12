@@ -48,6 +48,7 @@ import model.GameExtra;
 import model.GameMetadata;
 import model.Installer;
 import model.UserToken;
+import util.AppUtil;
 
 public class DownloadGameTask implements Runnable {
 	private static final Logger log = Logger.getLogger(DownloadGameTask.class.getName());
@@ -161,7 +162,12 @@ public class DownloadGameTask implements Runnable {
 					tempFiles.add(p);
 				}
 				
-				return gameRepository.save(new Game(null, details.title(), plan.getGameId(), details.cdKey(), imageFileName.get(), backgroundFileName.get(), category, releaseDate, attachments), true);
+				String sortingTitle = AppUtil.toSortingTitle(details.title());
+				if(sortingTitle.equals(details.title())) {
+					sortingTitle = null;
+				}
+				
+				return gameRepository.save(new Game(null, details.title(), plan.getGameId(), details.cdKey(), imageFileName.get(), backgroundFileName.get(), category, releaseDate, sortingTitle, null, attachments), true);
 			} finally {
 				tempFiles.forEach(p -> {
 					try {

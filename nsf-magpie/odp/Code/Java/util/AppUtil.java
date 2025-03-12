@@ -51,4 +51,23 @@ public enum AppUtil {
 			return result;
 		}
 	}
+	
+	/**
+	 * Translates the provided game title to a default expecting sorting
+	 * title.
+	 * 
+	 * @param title the actual game title
+	 * @return a default sorting title
+	 */
+	public static String toSortingTitle(String title) {
+		// Ultima games are numbered as such, with the TM
+		return title.replace(" I\u2122", " 1")
+			.replace(" II\u2122", " 2")
+			.replace(" III\u2122", " 3")
+			.replace(" IV\u2122", " 4")
+			.replace(" V\u2122", " 5")
+			.replace(" VI\u2122", " 6")
+			.replace(" VII\u2122", " 7")
+			.replace(" VIII\u2122", " 8");
+	}
 }
