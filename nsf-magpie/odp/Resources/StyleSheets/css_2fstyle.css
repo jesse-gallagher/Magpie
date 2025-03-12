@@ -1,6 +1,13 @@
+@font-face {
+  font-family: "appfont";
+  src: url("../fonts/Qaz-Regular.woff2") format('woff2');
+}
+
 html, body {
 	padding: 0;
 	margin: 0;
+	
+	font-family: "appfont", serif;
 }
 
 body {

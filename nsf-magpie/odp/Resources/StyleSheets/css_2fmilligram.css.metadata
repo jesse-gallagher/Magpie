@@ -9,9 +9,6 @@
   <item name="$FileModDT" sign="true">
     <datetime dst="true">20200618T145305,00-04</datetime>
   </item>
-  <item name="$FileNames" sign="true">
-    <text>milligram.css</text>
-  </item>
   <item name="$MimeCharSet" sign="true">
     <text>UTF-8</text>
   </item>
@@ -20,5 +17,8 @@
   </item>
   <item name="$DesignerBuild" sign="true">
     <text>Build V1450_12042024</text>
+  </item>
+  <item name="$FileNames" sign="true">
+    <text>css_2fmilligram.css</text>
   </item>
 </note>
