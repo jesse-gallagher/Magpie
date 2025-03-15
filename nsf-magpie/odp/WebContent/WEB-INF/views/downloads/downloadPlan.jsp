@@ -16,8 +16,10 @@
 	
 		    return `\${parseFloat((bytes / Math.pow(k, i)).toFixed(0))} \${sizes[i]}`;
 		}
-	
-		setInterval(() => {
+		
+		let updateStatus = null;
+		
+		updateStatus = () => {
 			const apiUrl = "${mvc.basePath}/api/gamedownload/${plan.documentId}/@status";
 			fetch(apiUrl, { includeCredentials: true })
 				.then((response) => response.json())
@@ -46,12 +48,16 @@
 								progress.innerText = ((completeCount / totalCount) * 100) + "";
 							}
 						}
+						setTimeout(() => updateStatus(), 2500);
 					} else {
 						// Otherwise, reload the page to show the results or exception
 						window.location = "${mvc.basePath}/library/" + encodeURIComponent(planStatus.plan.gameDocumentId);
 					}
 				});
-		}, 2500)
+			
+		}
+	
+		setTimeout(() => updateStatus(), 2500);
 	</script>
 	</c:if>
 
