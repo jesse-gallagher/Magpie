@@ -6,6 +6,17 @@
 <t:layout>
 	<c:if test="${plan.state == 'Planned' or plan.state == 'InProgress'}">
 	<script>
+		function formatBytes(bytes) {
+		    if (!bytes) return '0';
+	
+		    const k = 1024;
+		    const sizes = ['B', 'K', 'MB', 'GB', 'TB', 'PB', 'EB', 'ZB', 'YB'];
+	
+		    const i = Math.floor(Math.log(bytes) / Math.log(k));
+	
+		    return `\${parseFloat((bytes / Math.pow(k, i)).toFixed(0))} \${sizes[i]}`;
+		}
+	
 		setInterval(() => {
 			const apiUrl = "${mvc.basePath}/api/gamedownload/${plan.documentId}/@status";
 			fetch(apiUrl, { includeCredentials: true })
@@ -20,7 +31,7 @@
 						ul.innerHTML = "";
 						planStatus.activeDownloads.forEach((download) => {
 							const li = document.createElement("li");
-							li.innerText = `\${download.file.name} (\${download.downloaded}/\${download.totalSize})`;
+							li.innerText = `\${download.file.name} (\${formatBytes(download.downloaded)}/\${formatBytes(download.totalSize)})`;
 							ul.appendChild(li);
 						});
 						

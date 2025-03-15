@@ -250,6 +250,8 @@ public class DownloadGameTask implements Runnable {
 				java.nio.file.Path tempDir = Files.createTempDirectory(getClass().getName());
 				java.nio.file.Path tempFile = tempDir.resolve(fileName);
 				
+				long len = resp.headers().firstValueAsLong(HttpHeaders.CONTENT_LENGTH).orElse(0);
+				
 				try(
 					InputStream is = resp.body();
 					OutputStream out = Files.newOutputStream(tempFile);
@@ -266,7 +268,7 @@ public class DownloadGameTask implements Runnable {
 			                    transferred = Long.MAX_VALUE;
 			                }
 			                
-			                event.fire(new DownloadProgressEvent(plan, contextFile, transferred));
+			                event.fire(new DownloadProgressEvent(plan, contextFile, transferred, len));
 			            }
 			        }
 				}

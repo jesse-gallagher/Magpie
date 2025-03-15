@@ -19,7 +19,7 @@ import util.AppUtil;
 public class PlanProgressBean {
 	public class DownloadProgress {
 		private final DownloadableFile file;
-		private final long totalSize;
+		private long totalSize;
 		private long downloaded = 0;
 		
 		public DownloadProgress(DownloadableFile file, long totalSize) {
@@ -33,6 +33,10 @@ public class PlanProgressBean {
 		
 		public long getTotalSize() {
 			return totalSize;
+		}
+		
+		public void setTotalSize(long totalSize) {
+			this.totalSize = totalSize;
 		}
 		
 		public long getDownloaded() {
@@ -65,7 +69,12 @@ public class PlanProgressBean {
 		files.stream()
 			.filter(prog -> prog.getFile().equals(event.file()))
 			.findFirst()
-			.ifPresent(prog -> prog.setDownloaded(event.downloaded()));
+			.ifPresent(prog -> {
+				prog.setDownloaded(event.downloaded());
+				if(event.total() > 0) {
+					prog.setTotalSize(event.total());
+				}
+			});
 	}
 	
 	public List<DownloadProgress> getActiveDownloads(String planId) {
