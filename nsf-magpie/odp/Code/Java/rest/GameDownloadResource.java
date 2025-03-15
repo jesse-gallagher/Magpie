@@ -2,8 +2,8 @@ package rest;
 
 import java.util.List;
 
-import api.DownloadableFile;
 import bean.PlanProgressBean;
+import bean.PlanProgressBean.DownloadProgress;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.GET;
 import jakarta.ws.rs.NotFoundException;
@@ -13,9 +13,9 @@ import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import model.GameDownloadPlan;
 
-@Path("api/game")
-public class GogResource {
-	public record DownloadPlanStatus(GameDownloadPlan plan, List<DownloadableFile> activeDownloads) {}
+@Path("api/gamedownload")
+public class GameDownloadResource {
+	public record DownloadPlanStatus(GameDownloadPlan plan, List<DownloadProgress> activeDownloads) {}
 	
 	@Inject
 	private GameDownloadPlan.Repository planRepository;
@@ -23,7 +23,7 @@ public class GogResource {
 	@Inject
 	private PlanProgressBean progressBean;
 	
-	@Path("download/{id}/@status")
+	@Path("{id}/@status")
 	@GET
 	@Produces(MediaType.APPLICATION_JSON)
 	public DownloadPlanStatus getDownloadPlanStatus(@PathParam("id") String id) {

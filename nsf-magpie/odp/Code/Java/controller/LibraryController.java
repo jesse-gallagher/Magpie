@@ -30,7 +30,7 @@ public class LibraryController {
 		List<Game> games = gameRepository.list(Sort.asc("effectiveSort"))
 			.toList();
 		models.put("games", games);
-		return "games/library.jsp";
+		return "library/library.jsp";
 	}
 	
 	@Path("{id}")
@@ -42,6 +42,6 @@ public class LibraryController {
 		
 		models.put("game", entity);
 		
-		return "games/game.jsp";
+		return "library/game.jsp";
 	}
 }

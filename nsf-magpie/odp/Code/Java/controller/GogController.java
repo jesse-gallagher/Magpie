@@ -19,7 +19,6 @@ import jakarta.mvc.Controller;
 import jakarta.mvc.Models;
 import jakarta.ws.rs.FormParam;
 import jakarta.ws.rs.GET;
-import jakarta.ws.rs.NotFoundException;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
 import jakarta.ws.rs.PathParam;
@@ -131,7 +130,7 @@ public class GogController {
 		Optional<GameMetadata> existing = metadataRepository.findByGameId(ViewQuery.query().key(gameId, true));
 		models.put("metadata", existing.orElse(null));
 		
-		return "gog/game/game.jsp";
+		return "gog/game.jsp";
 	}
 	
 	@Path("game/@download")
@@ -145,18 +144,7 @@ public class GogController {
 			.orElseThrow(() -> new IllegalArgumentException(MessageFormat.format("Could not find token for ID {0}", tokenId)));
 		exec.submit(new DownloadGameTask(plan, token, gameDownloadPlanRepository, gameRepository, installerRepository, gameExtraRepository, metadataRepository));
 		
-		return "redirect:gog/game/download/" + plan.getDocumentId();
-	}
-	
-	@Path("game/download/{planId}")
-	@GET
-	public String showDownloadPlan(@PathParam("planId") String planId) {
-		GameDownloadPlan plan = gameDownloadPlanRepository.findById(planId)
-			.orElseThrow(() -> new NotFoundException(MessageFormat.format("Unable to find download plan for ID {0}", planId)));
-		
-		models.put("plan", plan);
-		
-		return "gog/game/downloadPlan.jsp";
+		return "redirect:downloads/" + plan.getDocumentId();
 	}
 	
 }

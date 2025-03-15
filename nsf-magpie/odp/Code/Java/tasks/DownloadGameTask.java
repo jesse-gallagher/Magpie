@@ -228,7 +228,6 @@ public class DownloadGameTask implements Runnable {
 				.GET()
 				.build();
 			try {
-				// TODO replace with BodyHandlers.ofFileDownload()?
 				HttpResponse<InputStream> resp = http.send(req, BodyHandlers.ofInputStream());
 				String finalUri = resp.uri().toString();
 				int slashIndex = finalUri.lastIndexOf('/');
@@ -244,12 +243,16 @@ public class DownloadGameTask implements Runnable {
 				java.nio.file.Path tempFile = tempDir.resolve(fileName);
 				
 				try(InputStream is = resp.body()) {
+					
 					Files.copy(is, tempFile, StandardCopyOption.REPLACE_EXISTING);
 				}
 				return tempFile;
 			} catch(Exception e) {
 				throw new RuntimeException(e);
 			}
+		} catch(Exception e) {
+			e.printStackTrace();
+			throw e;
 		}
 	}
 	

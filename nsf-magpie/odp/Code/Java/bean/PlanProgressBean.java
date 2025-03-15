@@ -16,8 +16,9 @@ import util.AppUtil;
 
 @ApplicationScoped
 public class PlanProgressBean {
+	public record DownloadProgress(DownloadableFile file) {}
 	
-	private Map<String, List<DownloadableFile>> activeDownloads;
+	private Map<String, List<DownloadProgress>> activeDownloads;
 	
 	@PostConstruct
 	public void init() {
@@ -25,16 +26,16 @@ public class PlanProgressBean {
 	}
 	
 	public void processDownloadStart(@Observes DownloadStartEvent event) {
-		List<DownloadableFile> files = getActiveDownloads(event.plan().getDocumentId());
-		files.add(event.file());
+		List<DownloadProgress> files = getActiveDownloads(event.plan().getDocumentId());
+		files.add(new DownloadProgress(event.file()));
 	}
 	
 	public void processDownloadEnd(@Observes DownloadEndEvent event) {
-		List<DownloadableFile> files = getActiveDownloads(event.plan().getDocumentId());
-		files.remove(event.file());
+		List<DownloadProgress> files = getActiveDownloads(event.plan().getDocumentId());
+		files.removeIf(prog -> prog.file().equals(event.file()));
 	}
 	
-	public List<DownloadableFile> getActiveDownloads(String planId) {
+	public List<DownloadProgress> getActiveDownloads(String planId) {
 		return AppUtil.computeIfAbsent(this.activeDownloads, planId, key -> Collections.synchronizedList(new ArrayList<>()));
 	}
 }

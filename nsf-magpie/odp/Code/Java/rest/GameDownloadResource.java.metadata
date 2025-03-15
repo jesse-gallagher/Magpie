@@ -4,9 +4,9 @@
     <text>34567Cg~[</text>
   </item>
   <item name="$TITLE">
-    <text>rest/GogResource.java</text>
+    <text>rest/GameDownloadResource.java</text>
   </item>
   <item name="$FileNames" sign="true">
-    <text>rest/GogResource.java</text>
+    <text>rest/GameDownloadResource.java</text>
   </item>
 </note>

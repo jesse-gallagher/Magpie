@@ -7,7 +7,7 @@
 	<c:if test="${plan.state == 'Planned' or plan.state == 'InProgress'}">
 	<script>
 		setInterval(() => {
-			const apiUrl = "${mvc.basePath}/api/game/download/${plan.documentId}/@status";
+			const apiUrl = "${mvc.basePath}/api/gamedownload/${plan.documentId}/@status";
 			fetch(apiUrl, { includeCredentials: true })
 				.then((response) => response.json())
 				.then((planStatus) => {
@@ -20,7 +20,7 @@
 						ul.innerHTML = "";
 						planStatus.activeDownloads.forEach((download) => {
 							const li = document.createElement("li");
-							li.innerText = download.name;
+							li.innerText = download.file.name;
 							ul.appendChild(li);
 						});
 						
