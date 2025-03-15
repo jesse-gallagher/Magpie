@@ -8,6 +8,7 @@ import java.util.concurrent.ConcurrentHashMap;
 
 import api.DownloadableFile;
 import event.DownloadEndEvent;
+import event.DownloadProgressEvent;
 import event.DownloadStartEvent;
 import jakarta.annotation.PostConstruct;
 import jakarta.enterprise.context.ApplicationScoped;
@@ -16,7 +17,31 @@ import util.AppUtil;
 
 @ApplicationScoped
 public class PlanProgressBean {
-	public record DownloadProgress(DownloadableFile file) {}
+	public class DownloadProgress {
+		private final DownloadableFile file;
+		private final long totalSize;
+		private long downloaded = 0;
+		
+		public DownloadProgress(DownloadableFile file, long totalSize) {
+			this.file = file;
+			this.totalSize = totalSize;
+		}
+		
+		public DownloadableFile getFile() {
+			return file;
+		}
+		
+		public long getTotalSize() {
+			return totalSize;
+		}
+		
+		public long getDownloaded() {
+			return downloaded;
+		}
+		public void setDownloaded(long downloaded) {
+			this.downloaded = downloaded;
+		}
+	}
 	
 	private Map<String, List<DownloadProgress>> activeDownloads;
 	
@@ -27,12 +52,20 @@ public class PlanProgressBean {
 	
 	public void processDownloadStart(@Observes DownloadStartEvent event) {
 		List<DownloadProgress> files = getActiveDownloads(event.plan().getDocumentId());
-		files.add(new DownloadProgress(event.file()));
+		files.add(new DownloadProgress(event.file(), event.file().getSizeBytes()));
 	}
 	
 	public void processDownloadEnd(@Observes DownloadEndEvent event) {
 		List<DownloadProgress> files = getActiveDownloads(event.plan().getDocumentId());
-		files.removeIf(prog -> prog.file().equals(event.file()));
+		files.removeIf(prog -> prog.getFile().equals(event.file()));
+	}
+	
+	public void processDownloadProgress(@Observes DownloadProgressEvent event) {
+		List<DownloadProgress> files = getActiveDownloads(event.plan().getDocumentId());
+		files.stream()
+			.filter(prog -> prog.getFile().equals(event.file()))
+			.findFirst()
+			.ifPresent(prog -> prog.setDownloaded(event.downloaded()));
 	}
 	
 	public List<DownloadProgress> getActiveDownloads(String planId) {

@@ -2,6 +2,7 @@ package tasks;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URI;
@@ -12,7 +13,6 @@ import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
 import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.StandardCopyOption;
 import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -29,6 +29,7 @@ import org.openntf.xsp.jakarta.nosql.mapping.extension.ViewQuery;
 
 import com.ibm.commons.util.StringUtil;
 
+import api.DownloadableFile;
 import api.gog.GogAccountApi;
 import api.gog.GogAuthApi;
 import api.gog.GogAuthApi.GrantType;
@@ -37,6 +38,7 @@ import api.gog.model.GameDetails.DownloadEntry;
 import api.gog.model.GameDownload;
 import api.gog.model.TokenResponse;
 import event.DownloadEndEvent;
+import event.DownloadProgressEvent;
 import event.DownloadStartEvent;
 import jakarta.enterprise.event.Event;
 import jakarta.enterprise.inject.spi.CDI;
@@ -52,6 +54,8 @@ import util.AppUtil;
 
 public class DownloadGameTask implements Runnable {
 	private static final Logger log = Logger.getLogger(DownloadGameTask.class.getName());
+
+    private static final int DEFAULT_BUFFER_SIZE = 16384;
 	
 	private final UserToken userToken;
 	
@@ -146,7 +150,7 @@ public class DownloadGameTask implements Runnable {
 				Optional<GameMetadata> gameMetadata = metadataRepository.findByGameId(ViewQuery.query().key(plan.getGameId(), true));
 				if(gameMetadata.isPresent()) {
 					if(StringUtil.isNotEmpty(gameMetadata.get().imageUrl())) {
-						Path p = download(authToken, gameMetadata.get().imageUrl() + ".webp", "image.webp");
+						Path p = download(authToken, gameMetadata.get().imageUrl() + ".webp", "image.webp", null);
 						imageFileName.set(p.getFileName().toString());
 						attachments.add(EntityAttachment.of(p));
 						tempFiles.add(p);
@@ -156,7 +160,7 @@ public class DownloadGameTask implements Runnable {
 				}
 				
 				if(StringUtil.isNotEmpty(details.backgroundImage())) {
-					Path p = download(authToken, details.backgroundImage() + ".webp", "background.webp");
+					Path p = download(authToken, details.backgroundImage() + ".webp", "background.webp", null);
 					backgroundFileName.set(p.getFileName().toString());
 					attachments.add(EntityAttachment.of(p));
 					tempFiles.add(p);
@@ -186,7 +190,7 @@ public class DownloadGameTask implements Runnable {
 		Event<DownloadStartEvent> event = CDI.current().select(new TypeLiteral<Event<DownloadStartEvent>>() {}).get();
 		event.fire(new DownloadStartEvent(plan, Installer.class, download));
 		
-		downloadAndDelete(authToken, download.manualUrl(), tempFile -> {
+		downloadAndDelete(authToken, download.manualUrl(), download, tempFile -> {
 			Installer installer = new Installer(null, gameDocumentId, download.name(), language, os, download.manualUrl(), download.version(), download.date(), List.of(EntityAttachment.of(tempFile)));
 			installer = installerRepository.save(installer, true);
 			
@@ -204,7 +208,7 @@ public class DownloadGameTask implements Runnable {
 		Event<DownloadStartEvent> event = CDI.current().select(new TypeLiteral<Event<DownloadStartEvent>>() {}).get();
 		event.fire(new DownloadStartEvent(plan, GameExtra.class, extra));
 		
-		downloadAndDelete(authToken, extra.manualUrl(), tempFile -> {
+		downloadAndDelete(authToken, extra.manualUrl(), extra, tempFile -> {
 			GameExtra gameExtra = new GameExtra(null, gameDocumentId, extra.name(), extra.type(), extra.manualUrl(), List.of(EntityAttachment.of(tempFile)));
 			gameExtra = gameExtraRepository.save(gameExtra, true);
 			
@@ -217,7 +221,7 @@ public class DownloadGameTask implements Runnable {
 		});
 	}
 	
-	private Path download(String authToken, String manualUrl, String destFileName) {
+	private Path download(String authToken, String manualUrl, String destFileName, DownloadableFile contextFile) {
 		try(HttpClient http = HttpClient.newBuilder().followRedirects(Redirect.ALWAYS).build()) {
 			URI baseUri = URI.create("https://gog.com/");
 			
@@ -228,6 +232,10 @@ public class DownloadGameTask implements Runnable {
 				.GET()
 				.build();
 			try {
+
+				@SuppressWarnings("serial")
+				Event<DownloadProgressEvent> event = CDI.current().select(new TypeLiteral<Event<DownloadProgressEvent>>() {}).get();
+				
 				HttpResponse<InputStream> resp = http.send(req, BodyHandlers.ofInputStream());
 				String finalUri = resp.uri().toString();
 				int slashIndex = finalUri.lastIndexOf('/');
@@ -242,9 +250,25 @@ public class DownloadGameTask implements Runnable {
 				java.nio.file.Path tempDir = Files.createTempDirectory(getClass().getName());
 				java.nio.file.Path tempFile = tempDir.resolve(fileName);
 				
-				try(InputStream is = resp.body()) {
-					
-					Files.copy(is, tempFile, StandardCopyOption.REPLACE_EXISTING);
+				try(
+					InputStream is = resp.body();
+					OutputStream out = Files.newOutputStream(tempFile);
+				) {
+					long transferred = 0;
+			        byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
+			        int read;
+			        while ((read = is.read(buffer, 0, DEFAULT_BUFFER_SIZE)) >= 0) {
+			            out.write(buffer, 0, read);
+			            if (transferred < Long.MAX_VALUE) {
+			                try {
+			                    transferred = Math.addExact(transferred, read);
+			                } catch (ArithmeticException ignore) {
+			                    transferred = Long.MAX_VALUE;
+			                }
+			                
+			                event.fire(new DownloadProgressEvent(plan, contextFile, transferred));
+			            }
+			        }
 				}
 				return tempFile;
 			} catch(Exception e) {
@@ -257,11 +281,11 @@ public class DownloadGameTask implements Runnable {
 	}
 	
 
-	private void downloadAndDelete(String authToken, String manualUrl, Consumer<Path> callback) {
+	private void downloadAndDelete(String authToken, String manualUrl, DownloadableFile contextFile, Consumer<Path> callback) {
 		try {
 			Path tempFile = null;
 			try {
-				tempFile = download(authToken, manualUrl, null);
+				tempFile = download(authToken, manualUrl, null, contextFile);
 				
 				callback.accept(tempFile);
 			} finally {

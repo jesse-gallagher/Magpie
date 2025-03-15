@@ -20,7 +20,7 @@
 						ul.innerHTML = "";
 						planStatus.activeDownloads.forEach((download) => {
 							const li = document.createElement("li");
-							li.innerText = download.file.name;
+							li.innerText = `\${download.file.name} (\${download.downloaded}/\${download.totalSize})`;
 							ul.appendChild(li);
 						});
 						
