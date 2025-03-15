@@ -11,6 +11,7 @@ import org.openntf.xsp.jakarta.nosql.mapping.extension.RepositoryProvider;
 import com.ibm.commons.util.StringUtil;
 
 import jakarta.enterprise.inject.spi.CDI;
+import jakarta.json.bind.annotation.JsonbTransient;
 import jakarta.nosql.Column;
 import jakarta.nosql.Entity;
 import jakarta.nosql.Id;
@@ -102,6 +103,7 @@ public class GameDownloadPlan {
 		extraIds.add(gameExtra.documentId());
 		this.extraIds = extraIds;
 	}
+	@JsonbTransient
 	public List<GameExtra> getExtras() {
 		GameExtra.Repository repo = CDI.current().select(GameExtra.Repository.class).get();
 		return this.getExtraIds().stream()
@@ -132,6 +134,7 @@ public class GameDownloadPlan {
 		installerIds.add(installer.documentId());
 		this.installerIds = installerIds;
 	}
+	@JsonbTransient
 	public List<Installer> getInstallers() {
 		Installer.Repository repo = CDI.current().select(Installer.Repository.class).get();
 		return this.getInstallerIds().stream()
@@ -140,6 +143,7 @@ public class GameDownloadPlan {
 			.toList();
 	}
 	
+	@JsonbTransient
 	public Optional<Game> getGame() {
 		String id = this.gameDocumentId;
 		if(StringUtil.isEmpty(id)) {
