@@ -35,23 +35,21 @@
 						<th><c:out value="${translation.language}"/></th>
 						<th><c:out value="${translation.version}"/></th>
 						<th class="col-size"><c:out value="${translation.size}"/></th>
-						<th class="col-download"></th>
 					</tr>
 				</thead>
 				<tbody>
 					<c:forEach items="${game.getInstallers()}" var="installer">
 					<c:forEach items="${installer.attachments}" var="att">
 					<tr>
-						<td><c:out value="${installer.name}"/></td>
+						<td>
+							<a href="${mvc.basePath}/api/installers/${installer.documentId}/${encoder.urlEncode(att.name)}">
+								<c:out value="${installer.name}"/>
+							</a>
+						</td>
 						<td><c:out value="${installer.os}"/></td>
 						<td><c:out value="${installer.language}"/></td>
 						<td><c:out value="${installer.version}"/></td>
 						<td class="col-size"><c:out value="${messages.formatFileSize(att.length)}"/></td>
-						<td class="col-download">
-							<a href="${mvc.basePath}/api/installers/${installer.documentId}/${encoder.urlEncode(att.name)}">
-								<c:out value="${translation.download}"/>
-							</a>
-						</td>
 					</tr>
 					</c:forEach>
 					</c:forEach>
@@ -67,21 +65,19 @@
 						<th><c:out value="${translation.name}"/></th>
 						<th><c:out value="${translation.type}"/></th>
 						<th class="col-size"><c:out value="${translation.size}"/></th>
-						<th class="col-download"></th>
 					</tr>
 				</thead>
 				<tbody>
 					<c:forEach items="${game.getGameExtras()}" var="extra">
 					<c:forEach items="${extra.attachments}" var="att">
 					<tr>
-						<td><c:out value="${extra.name}"/></td>
-						<td><c:out value="${extra.type}"/></td>
-						<td class="col-size"><c:out value="${messages.formatFileSize(att.length)}"/></td>
-						<td class="col-download">
+						<td>
 							<a href="${mvc.basePath}/api/extras/${extra.documentId}/${encoder.urlEncode(att.name)}">
-								<c:out value="${translation.download}"/>
+								<c:out value="${extra.name}"/>
 							</a>
 						</td>
+						<td><c:out value="${extra.type}"/></td>
+						<td class="col-size"><c:out value="${messages.formatFileSize(att.length)}"/></td>
 					</tr>
 					</c:forEach>
 					</c:forEach>
