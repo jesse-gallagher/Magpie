@@ -87,6 +87,10 @@ details.expanding-form {
 	}
 }
 
+.checkbox-col {
+	width: 1.5rem;
+}
+
 @media (max-width: 749px) {
 	body {
 		max-width: 100%;

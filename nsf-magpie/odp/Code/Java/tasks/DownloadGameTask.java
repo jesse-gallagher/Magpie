@@ -68,7 +68,10 @@ public class DownloadGameTask implements Runnable {
 	private final GameExtra.Repository gameExtraRepository;
 	private final GameMetadata.Repository metadataRepository;
 	
-	public DownloadGameTask(GameDownloadPlan plan, UserToken userToken, GameDownloadPlan.Repository planRepository, Game.Repository gameRepository, Installer.Repository installerRepository, GameExtra.Repository gameExtraRepository, GameMetadata.Repository metadataRepository) {
+	private final List<String> downloadUrls;
+	private final List<String> extraUrls;
+	
+	public DownloadGameTask(GameDownloadPlan plan, UserToken userToken, GameDownloadPlan.Repository planRepository, Game.Repository gameRepository, Installer.Repository installerRepository, GameExtra.Repository gameExtraRepository, GameMetadata.Repository metadataRepository, List<String> downloadUrls, List<String> extraUrls) {
 		this.plan = plan;
 		this.userToken = userToken;
 		this.planRepository = planRepository;
@@ -76,6 +79,8 @@ public class DownloadGameTask implements Runnable {
 		this.installerRepository = installerRepository;
 		this.gameExtraRepository = gameExtraRepository;
 		this.metadataRepository = metadataRepository;
+		this.downloadUrls = downloadUrls;
+		this.extraUrls = extraUrls;
 	}
 
 	@Override
@@ -104,16 +109,30 @@ public class DownloadGameTask implements Runnable {
 			GameDetails details = accountApi.getGameDetails("Bearer " + authToken, plan.getGameId());
 			
 			Game game = findOrCreateGame(authToken, details);
-			plan.setExtraUrls(details.extras().stream().map(api.gog.model.GameExtra::manualUrl).toList());
-			plan.setInstallerUrls(details.getParsedDownloads().stream().map(DownloadEntry::download).map(GameDownload::manualUrl).toList());
+			plan.setExtraUrls(
+				details.extras().stream()
+					.map(api.gog.model.GameExtra::manualUrl)
+					.filter(extraUrls::contains)
+					.toList()
+			);
+			plan.setInstallerUrls(
+				details.getParsedDownloads().stream()
+					.map(DownloadEntry::download)
+					.map(GameDownload::manualUrl)
+					.filter(downloadUrls::contains)
+					.toList()
+			);
 			plan.setGameDocumentId(game.documentId());
 			plan.setState(GameDownloadPlan.State.InProgress);
 			
 			plan = planRepository.save(plan, true);
 			
-			details.extras().forEach(extra -> this.downloadExtra(authToken, game.documentId(), extra));
+			details.extras().stream()
+				.filter(extra -> extraUrls.contains(extra.manualUrl()))
+				.forEach(extra -> this.downloadExtra(authToken, game.documentId(), extra));
 			
-			details.getParsedDownloads()
+			details.getParsedDownloads().stream()
+				.filter(entry -> downloadUrls.contains(entry.download().manualUrl()))
 				.forEach(entry -> this.downloadInstaller(authToken, game.documentId(), entry.language(), entry.os(), entry.download()));
 			
 			plan.setState(GameDownloadPlan.State.Complete);

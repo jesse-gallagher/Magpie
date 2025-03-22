@@ -1,6 +1,7 @@
 package controller;
 
 import java.text.MessageFormat;
+import java.util.List;
 import java.util.Optional;
 
 import org.eclipse.microprofile.rest.client.inject.RestClient;
@@ -135,14 +136,15 @@ public class GogController {
 	
 	@Path("game/@download")
 	@POST
-	public String downloadGame(@FormParam("gameId") int gameId, @FormParam("tokenId") String tokenId) {
+	public String downloadGame(@FormParam("gameId") int gameId, @FormParam("tokenId") String tokenId, @FormParam("downloadUrl") List<String> downloadUrls, @FormParam("extraUrl") List<String> extraUrls) {
+		
 		GameDownloadPlan plan = new GameDownloadPlan();
 		plan.setGameId(gameId);
 		plan = gameDownloadPlanRepository.save(plan, true);
 
 		UserToken token = tokenRepository.findById(tokenId)
 			.orElseThrow(() -> new IllegalArgumentException(MessageFormat.format("Could not find token for ID {0}", tokenId)));
-		exec.submit(new DownloadGameTask(plan, token, gameDownloadPlanRepository, gameRepository, installerRepository, gameExtraRepository, metadataRepository));
+		exec.submit(new DownloadGameTask(plan, token, gameDownloadPlanRepository, gameRepository, installerRepository, gameExtraRepository, metadataRepository, downloadUrls, extraUrls));
 		
 		return "redirect:downloads/" + plan.getDocumentId();
 	}
