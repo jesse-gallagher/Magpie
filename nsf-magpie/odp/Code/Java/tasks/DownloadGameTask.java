@@ -62,29 +62,21 @@ public class DownloadGameTask implements Runnable {
 	private final UserToken userToken;
 	
 	private GameDownloadPlan plan;
-	private final GameDownloadPlan.Repository planRepository;
-	private final Game.Repository gameRepository;
-	private final Installer.Repository installerRepository;
-	private final GameExtra.Repository gameExtraRepository;
-	private final GameMetadata.Repository metadataRepository;
 	
 	private final List<String> downloadUrls;
 	private final List<String> extraUrls;
 	
-	public DownloadGameTask(GameDownloadPlan plan, UserToken userToken, GameDownloadPlan.Repository planRepository, Game.Repository gameRepository, Installer.Repository installerRepository, GameExtra.Repository gameExtraRepository, GameMetadata.Repository metadataRepository, List<String> downloadUrls, List<String> extraUrls) {
+	public DownloadGameTask(GameDownloadPlan plan, UserToken userToken, List<String> downloadUrls, List<String> extraUrls) {
 		this.plan = plan;
 		this.userToken = userToken;
-		this.planRepository = planRepository;
-		this.gameRepository = gameRepository;
-		this.installerRepository = installerRepository;
-		this.gameExtraRepository = gameExtraRepository;
-		this.metadataRepository = metadataRepository;
 		this.downloadUrls = downloadUrls;
 		this.extraUrls = extraUrls;
 	}
 
 	@Override
 	public void run() {
+
+		GameDownloadPlan.Repository planRepository = CDI.current().select(GameDownloadPlan.Repository.class).get();
 		
 		try {
 			GogAuthApi authApi = RestClientBuilder.newBuilder()
@@ -156,6 +148,8 @@ public class DownloadGameTask implements Runnable {
 	}
 	
 	private Game findOrCreateGame(String authToken, GameDetails details) {
+		Game.Repository gameRepository = CDI.current().select(Game.Repository.class).get();
+		GameMetadata.Repository metadataRepository = CDI.current().select(GameMetadata.Repository.class).get();
 		return gameRepository.findByTitle(details.title()).orElseGet(() -> {
 
 			List<Path> tempFiles = new ArrayList<>();
@@ -207,8 +201,13 @@ public class DownloadGameTask implements Runnable {
 	}
 
 	private void downloadInstaller(String authToken, String gameDocumentId, String language, String os, GameDownload download) {
+		CDI<Object> cdi = CDI.current();
+		
+		GameDownloadPlan.Repository planRepository = cdi.select(GameDownloadPlan.Repository.class).get();
+		Installer.Repository installerRepository = cdi.select(Installer.Repository.class).get();
+		
 		@SuppressWarnings("serial")
-		Event<DownloadStartEvent> event = CDI.current().select(new TypeLiteral<Event<DownloadStartEvent>>() {}).get();
+		Event<DownloadStartEvent> event = cdi.select(new TypeLiteral<Event<DownloadStartEvent>>() {}).get();
 		event.fire(new DownloadStartEvent(plan, Installer.class, download));
 		
 		downloadAndDelete(authToken, download.manualUrl(), download, tempFile -> {
@@ -225,8 +224,13 @@ public class DownloadGameTask implements Runnable {
 	}
 	
 	private void downloadExtra(String authToken, String gameDocumentId, api.gog.model.GameExtra extra) {
+		CDI<Object> cdi = CDI.current();
+		
+		GameDownloadPlan.Repository planRepository = cdi.select(GameDownloadPlan.Repository.class).get();
+		GameExtra.Repository gameExtraRepository = cdi.select(GameExtra.Repository.class).get();
+		
 		@SuppressWarnings("serial")
-		Event<DownloadStartEvent> event = CDI.current().select(new TypeLiteral<Event<DownloadStartEvent>>() {}).get();
+		Event<DownloadStartEvent> event = cdi.select(new TypeLiteral<Event<DownloadStartEvent>>() {}).get();
 		event.fire(new DownloadStartEvent(plan, GameExtra.class, extra));
 		
 		downloadAndDelete(authToken, extra.manualUrl(), extra, tempFile -> {

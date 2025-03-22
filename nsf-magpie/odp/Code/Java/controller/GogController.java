@@ -1,6 +1,8 @@
 package controller;
 
 import java.text.MessageFormat;
+import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Optional;
 
@@ -51,19 +53,13 @@ public class GogController {
 	private GameDownloadPlan.Repository gameDownloadPlanRepository;
 	
 	@Inject
-	private Game.Repository gameRepository;
-	
-	@Inject
-	private Installer.Repository installerRepository;
-	
-	@Inject
-	private GameExtra.Repository gameExtraRepository;
-	
-	@Inject
 	private GameMetadata.Repository metadataRepository;
 	
 	@Inject
 	private UserToken.Repository tokenRepository;
+	
+	@Inject
+	private Game.Repository gameRepository;
 	
 	@Inject @Named("java:comp/DefaultManagedExecutorService")
 	private ManagedExecutorService exec;
@@ -128,6 +124,19 @@ public class GogController {
 		models.put("tokenId", tokenId);
 		models.put("details", details);
 		
+		// Look for existing downloads so they can be skipped in the UI
+		Collection<String> downloadedUrls = new HashSet<>();
+		gameRepository.findByTitle(details.title()).ifPresent(game -> {
+			game.getGameExtras().stream()
+				.map(GameExtra::url)
+				.forEach(downloadedUrls::add);
+			game.getInstallers().stream()
+				.map(Installer::url)
+				.forEach(downloadedUrls::add);
+		});
+		
+		models.put("downloadedUrls", downloadedUrls);
+		
 		Optional<GameMetadata> existing = metadataRepository.findByGameId(ViewQuery.query().key(gameId, true));
 		models.put("metadata", existing.orElse(null));
 		
@@ -144,7 +153,7 @@ public class GogController {
 
 		UserToken token = tokenRepository.findById(tokenId)
 			.orElseThrow(() -> new IllegalArgumentException(MessageFormat.format("Could not find token for ID {0}", tokenId)));
-		exec.submit(new DownloadGameTask(plan, token, gameDownloadPlanRepository, gameRepository, installerRepository, gameExtraRepository, metadataRepository, downloadUrls, extraUrls));
+		exec.submit(new DownloadGameTask(plan, token, downloadUrls, extraUrls));
 		
 		return "redirect:downloads/" + plan.getDocumentId();
 	}

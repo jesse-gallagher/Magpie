@@ -37,7 +37,11 @@
 					<tbody>
 					<c:forEach items="${details.getParsedDownloads()}" var="entry">
 						<tr>
-							<td class="checkbox-col"><input type="checkbox" name="downloadUrl" value="${fn:escapeXml(entry.download.manualUrl)}" checked /></td>
+							<td class="checkbox-col">
+								<c:if test="${not downloadedUrls.contains(entry.download.manualUrl)}">
+								<input type="checkbox" name="downloadUrl" value="${fn:escapeXml(entry.download.manualUrl)}" checked />
+								</c:if>
+							</td>
 							<td><c:out value="${entry.os}"/></td>
 							<td><c:out value="${entry.language}"/></td>
 							<td><c:out value="${entry.download.name}"/></td>
@@ -64,7 +68,11 @@
 					<tbody>
 					<c:forEach items="${details.extras}" var="extra">
 						<tr>
-							<td class="checkbox-col"><input type="checkbox" name="extraUrl" value="${fn:escapeXml(extra.manualUrl)}" checked /></td>
+							<td class="checkbox-col">
+								<c:if test="${not downloadedUrls.contains(extra.manualUrl)}">
+								<input type="checkbox" name="extraUrl" value="${fn:escapeXml(extra.manualUrl)}" checked />
+								</c:if>
+							</td>
 							<td><c:out value="${extra.name}"/></td>
 							<td><c:out value="${extra.type}"/></td>
 							<td><c:out value="${messages.formatFileSize(extra.getSizeBytes())}"/></td>
