@@ -28,6 +28,8 @@ import org.eclipse.microprofile.rest.client.RestClientBuilder;
 import org.openntf.xsp.jakarta.nosql.mapping.extension.ViewQuery;
 
 import com.ibm.commons.util.StringUtil;
+import com.ibm.designer.runtime.domino.adapter.ComponentModule;
+import com.ibm.domino.xsp.module.nsf.NotesContext;
 
 import api.DownloadableFile;
 import api.gog.GogAccountApi;
@@ -222,6 +224,8 @@ public class DownloadGameTask implements Runnable {
 	}
 	
 	private Path download(String authToken, String manualUrl, String destFileName, DownloadableFile contextFile) {
+		ComponentModule mod = NotesContext.getCurrent().getModule();
+		
 		try(HttpClient http = HttpClient.newBuilder().followRedirects(Redirect.ALWAYS).build()) {
 			URI baseUri = URI.create("https://gog.com/");
 			
@@ -260,6 +264,8 @@ public class DownloadGameTask implements Runnable {
 			        byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
 			        int read;
 			        while ((read = is.read(buffer, 0, DEFAULT_BUFFER_SIZE)) >= 0) {
+			        	mod.updateLastModuleAccess();
+			        	
 			            out.write(buffer, 0, read);
 			            if (transferred < Long.MAX_VALUE) {
 			                try {
