@@ -9,13 +9,13 @@
   <item name="$FileModDT" sign="true">
     <datetime dst="true">20241007T224310,00-04</datetime>
   </item>
-  <item name="$FileNames" sign="true">
-    <text>Qaz-Regular.woff2</text>
-  </item>
   <item name="$TITLE" sign="true">
     <text>fonts/Qaz-Regular.woff2</text>
   </item>
   <item name="$DesignerBuild" sign="true">
     <text>Build V1450_12042024</text>
+  </item>
+  <item name="$FileNames" sign="true">
+    <text>fonts_2fQaz-Regular.woff2</text>
   </item>
 </note>
