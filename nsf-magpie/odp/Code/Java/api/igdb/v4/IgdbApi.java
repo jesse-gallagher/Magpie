@@ -1,8 +1,11 @@
 package api.igdb.v4;
 
+import java.util.List;
+
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
-import jakarta.json.JsonArray;
+import api.igdb.v4.model.IgdbGame;
+import api.igdb.v4.model.SearchResult;
 import jakarta.ws.rs.HeaderParam;
 import jakarta.ws.rs.POST;
 import jakarta.ws.rs.Path;
@@ -20,10 +23,10 @@ public interface IgdbApi {
 	@POST
 	@Path("games")
 	@Produces(MediaType.APPLICATION_JSON)
-	JsonArray listGames(@HeaderParam("Client-ID") String clientId, @HeaderParam(HttpHeaders.AUTHORIZATION) String authorization, String body);
+	List<IgdbGame> listGames(@HeaderParam("Client-ID") String clientId, @HeaderParam(HttpHeaders.AUTHORIZATION) String authorization, String body);
 
 	@POST
 	@Path("search")
 	@Produces(MediaType.APPLICATION_JSON)
-	JsonArray search(@HeaderParam("Client-ID") String clientId, @HeaderParam(HttpHeaders.AUTHORIZATION) String authorization, String body);
+	List<SearchResult> search(@HeaderParam("Client-ID") String clientId, @HeaderParam(HttpHeaders.AUTHORIZATION) String authorization, String body);
 }

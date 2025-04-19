@@ -91,7 +91,7 @@ public class GogController {
 		result.products().forEach(product -> {
 			Optional<GameMetadata> existing = metadataRepository.findByGameId(ViewQuery.query().key(product.id(), true));
 			if(existing.isEmpty()) {
-				metadataRepository.save(GameMetadata.forProduct(product), true);
+				metadataRepository.save(product.toGameMetadata(), true);
 			}
 		});
 		

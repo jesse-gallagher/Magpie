@@ -8,7 +8,6 @@ import org.openntf.xsp.jakarta.nosql.mapping.extension.RepositoryProvider;
 import org.openntf.xsp.jakarta.nosql.mapping.extension.ViewEntries;
 import org.openntf.xsp.jakarta.nosql.mapping.extension.ViewQuery;
 
-import api.gog.model.Product;
 import jakarta.nosql.Column;
 import jakarta.nosql.Entity;
 import jakarta.nosql.Id;
@@ -29,14 +28,5 @@ public record GameMetadata(
 	public interface Repository extends DominoRepository<GameMetadata, String> {
 		@ViewEntries("Game Metadata")
 		Optional<GameMetadata> findByGameId(ViewQuery query);
-	}
-	
-	public static GameMetadata forProduct(Product product) {
-		LocalDate releaseDate = null;
-		if(product.releaseDate() != null) {
-			releaseDate = product.releaseDate().toOffsetDateTime().toLocalDate();
-		}
-		
-		return new GameMetadata(null, product.id(), product.image(), product.category(), releaseDate);
 	}
 }

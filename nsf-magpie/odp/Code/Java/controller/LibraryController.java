@@ -13,6 +13,7 @@ import jakarta.ws.rs.PathParam;
 import jakarta.ws.rs.Produces;
 import jakarta.ws.rs.core.MediaType;
 import model.Game;
+import model.GameDetails;
 
 @Controller
 @Path("library")
@@ -23,6 +24,9 @@ public class LibraryController {
 	
 	@Inject
 	private Game.Repository gameRepository;
+	
+	@Inject
+	private GameDetails.Repository gameDetailsRepository;
 	
 	@GET
 	@Produces(MediaType.TEXT_HTML)
@@ -41,6 +45,10 @@ public class LibraryController {
 			.orElseThrow(() -> new NotFoundException("Could not find game for ID " + id));
 		
 		models.put("game", entity);
+		
+		gameDetailsRepository.findByGameId(id).findFirst().ifPresent(details -> {
+			models.put("details", details);
+		});
 		
 		return "library/game.jsp";
 	}

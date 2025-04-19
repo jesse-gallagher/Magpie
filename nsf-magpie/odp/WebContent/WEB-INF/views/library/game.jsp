@@ -16,6 +16,17 @@
 			</figure>
 		</header>
 		
+		<c:if test="${not empty details}">
+			<p><c:out value="${details.summary}"/></p>
+		</c:if>
+		
+		<p>
+			<form method="GET" action="${mvc.basePath}/library/metadata/@add">
+				<input type="hidden" name="game" value="${game.documentId}" />
+				<input type="submit" value="${fn:escapeXml(translation.addGameMetadata)}" />
+			</form>
+		</p>
+		
 		<dl>
 			<dt><c:out value="${translation.releaseDate}"/></dt>
 			<dd><c:out value="${game.releaseDate}"/></dd>
