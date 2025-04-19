@@ -1,8 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <note class="form" xmlns="http://www.lotus.com/dxl">
-  <item name="$Flags">
-    <text>34CiQ</text>
-  </item>
   <item name="$FlagsExt" sign="true">
     <text>D</text>
   </item>
@@ -15,16 +12,22 @@
   <item name="$ImagesColorize" sign="true">
     <number>0</number>
   </item>
-  <item name="$FileModDT" sign="true">
-    <datetime dst="true">20250311T192421,01-04</datetime>
-  </item>
-  <item name="$ImageNames" sign="true">
-    <text>icon-color-241.png</text>
-  </item>
   <item name="$TITLE" sign="true">
     <text>img\icon-color-241.png</text>
   </item>
   <item name="$DesignerBuild" sign="true">
     <text>Build V1450_12042024</text>
+  </item>
+  <item name="$MimeType" sign="true">
+    <text>image/png</text>
+  </item>
+  <item name="$FileModDT" sign="true">
+    <datetime dst="true">20250419T115101,51-04</datetime>
+  </item>
+  <item name="$Flags">
+    <text>34CiQ</text>
+  </item>
+  <item name="$ImageNames" sign="true">
+    <text>magpie-stroke-241.png</text>
   </item>
 </note>
