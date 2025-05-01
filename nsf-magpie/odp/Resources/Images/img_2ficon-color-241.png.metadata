@@ -12,12 +12,6 @@
   <item name="$ImagesColorize" sign="true">
     <number>0</number>
   </item>
-  <item name="$TITLE" sign="true">
-    <text>img\icon-color-241.png</text>
-  </item>
-  <item name="$DesignerBuild" sign="true">
-    <text>Build V1450_12042024</text>
-  </item>
   <item name="$MimeType" sign="true">
     <text>image/png</text>
   </item>
@@ -29,5 +23,11 @@
   </item>
   <item name="$ImageNames" sign="true">
     <text>magpie-stroke-241.png</text>
+  </item>
+  <item name="$TITLE" sign="true">
+    <text>img/icon-color-241.png</text>
+  </item>
+  <item name="$DesignerBuild" sign="true">
+    <text>Build V1450_04162025</text>
   </item>
 </note>

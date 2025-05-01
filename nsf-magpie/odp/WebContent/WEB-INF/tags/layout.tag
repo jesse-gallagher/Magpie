@@ -10,8 +10,8 @@
 		
 		<base href="${pageContext.request.contextPath}/" />
 		
-		<link rel="shortcut icon" href="${pageContext.request.contextPath}/$Icon" />
-		<link rel="apple-touch-icon" sizes="32x32" href="${pageContext.request.contextPath}/$Icon" />
+		<link rel="shortcut icon" href="${pageContext.request.contextPath}/img/icon-color-64.png" />
+		<link rel="apple-touch-icon" sizes="32x32" href="${pageContext.request.contextPath}/img/icon-color-241.png" />
 		<link rel="stylesheet" href="css/normalize.css" />
 		<link rel="stylesheet" href="css/milligram.css" />
 		<link rel="stylesheet" href="css/style.css" />

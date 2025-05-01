@@ -26,10 +26,10 @@ import java.util.logging.Logger;
 import org.eclipse.jnosql.communication.driver.attachment.EntityAttachment;
 import org.eclipse.microprofile.rest.client.RestClientBuilder;
 import org.openntf.xsp.jakarta.nosql.mapping.extension.ViewQuery;
+import org.openntf.xsp.jakartaee.module.ComponentModuleLocator;
 
 import com.ibm.commons.util.StringUtil;
 import com.ibm.designer.runtime.domino.adapter.ComponentModule;
-import com.ibm.domino.xsp.module.nsf.NotesContext;
 
 import api.DownloadableFile;
 import api.gog.GogAccountApi;
@@ -247,7 +247,7 @@ public class DownloadGameTask implements Runnable {
 	}
 	
 	private Path download(String authToken, String manualUrl, String destFileName, DownloadableFile contextFile) {
-		ComponentModule mod = NotesContext.getCurrent().getModule();
+		ComponentModule mod = ComponentModuleLocator.getDefault().get().getActiveModule();
 		
 		try(HttpClient http = HttpClient.newBuilder().followRedirects(Redirect.ALWAYS).build()) {
 			URI baseUri = URI.create("https://gog.com/");

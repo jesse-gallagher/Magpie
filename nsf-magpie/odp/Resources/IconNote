@@ -37,10 +37,6 @@ AAAAUEECICABAAD/////+A4DgA==
   <item name="$DefaultWebLaunchPage">
     <text>HomeRedir</text>
   </item>
-  <item name="$TITLE">
-    <text>Magpie
-</text>
-  </item>
   <item name="$Daos">
     <text>1</text>
   </item>
@@ -49,5 +45,9 @@ AAAAUEECICABAAD/////+A4DgA==
   </item>
   <item name="$Flags">
     <text>J7FKzNZ4qE</text>
+  </item>
+  <item name="$TITLE">
+    <text>Magpie
+webpath=magpie</text>
   </item>
 </note>
