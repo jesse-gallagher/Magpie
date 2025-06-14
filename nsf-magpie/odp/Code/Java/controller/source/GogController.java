@@ -35,7 +35,7 @@ import model.UserToken;
 import tasks.DownloadGameTask;
 
 @Controller
-@Path("gog")
+@Path("source/gog")
 public class GogController {
 
 	@Inject
@@ -98,7 +98,7 @@ public class GogController {
 		models.put("result", result);
 		models.put("tokenId", tokenId);
 		
-		return "gog/search.jsp";
+		return "source/gog/search.jsp";
 	}
 	
 	@Path("game/{game_id}")
@@ -140,7 +140,7 @@ public class GogController {
 		Optional<GameMetadata> existing = metadataRepository.findByGameId(ViewQuery.query().key(gameId, true));
 		models.put("metadata", existing.orElse(null));
 		
-		return "gog/game.jsp";
+		return "source/gog/game.jsp";
 	}
 	
 	@Path("game/@download")

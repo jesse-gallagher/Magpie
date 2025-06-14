@@ -58,7 +58,7 @@ public class IgdbController {
 	@Path("@add")
 	@GET
 	@View("source/igdb/detailsAdd.jsp")
-	public void addMetadata(@NotEmpty @QueryParam("game") String gameId, @QueryParam("title") String title) {
+	public void addDetails(@NotEmpty @QueryParam("game") String gameId, @QueryParam("title") String title) {
 		Game game = gameRepository.findById(gameId)
 			.orElseThrow(() -> new IllegalArgumentException(MessageFormat.format("Unable to find game for ID {0}", gameId)));
 		
@@ -83,7 +83,7 @@ public class IgdbController {
 	@Path("@addSpecific")
 	@GET
 	@View("source/igdb/detailsAddSpecific.jsp")
-	public void addMetadataSpecific(@NotEmpty @QueryParam("game") String gameId, @QueryParam("resultId") int resultId) {
+	public void addDetailsSpecific(@NotEmpty @QueryParam("game") String gameId, @QueryParam("resultId") int resultId) {
 		Game game = gameRepository.findById(gameId)
 			.orElseThrow(() -> new IllegalArgumentException(MessageFormat.format("Unable to find game for ID {0}", gameId)));
 		
@@ -109,7 +109,7 @@ public class IgdbController {
 	
 	@Path("@addSpecific")
 	@POST
-	public String saveMetadataSpecific(@NotEmpty @FormParam("game") String gameId, @FormParam("resultId") int resultId) {
+	public String saveDetailsSpecific(@NotEmpty @FormParam("game") String gameId, @FormParam("resultId") int resultId) {
 		GameDetails details = detailsCache.get("igdb-" + resultId)
 			.orElseThrow(() -> new NotFoundException(MessageFormat.format("Could not find cached details for ID {0}", resultId)));
 		
