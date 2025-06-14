@@ -1,5 +1,6 @@
 package api.igdb.v4.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import jakarta.json.bind.annotation.JsonbProperty;
@@ -68,6 +69,6 @@ public record IgdbGame(
 ) {
 	
 	public GameDetails toGameDetails(String gameId) {
-		return new GameDetails(null, "igdb", gameId, url, summary);
+		return new GameDetails(null, "igdb", gameId, url, summary, new ArrayList<>(), new ArrayList<>());
 	}
 }

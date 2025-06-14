@@ -56,8 +56,6 @@ import util.AppUtil;
 
 public class DownloadGameTask implements Runnable {
 	private static final Logger log = Logger.getLogger(DownloadGameTask.class.getName());
-
-    private static final int DEFAULT_BUFFER_SIZE = 16384;
 	
 	private final UserToken userToken;
 	
@@ -284,9 +282,9 @@ public class DownloadGameTask implements Runnable {
 					OutputStream out = Files.newOutputStream(tempFile);
 				) {
 					long transferred = 0;
-			        byte[] buffer = new byte[DEFAULT_BUFFER_SIZE];
+			        byte[] buffer = new byte[AppUtil.DEFAULT_DOWNLOAD_BUFFER_SIZE];
 			        int read;
-			        while ((read = is.read(buffer, 0, DEFAULT_BUFFER_SIZE)) >= 0) {
+			        while ((read = is.read(buffer, 0, AppUtil.DEFAULT_DOWNLOAD_BUFFER_SIZE)) >= 0) {
 			        	mod.updateLastModuleAccess();
 			        	
 			            out.write(buffer, 0, read);

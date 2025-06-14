@@ -14,6 +14,14 @@
 		<dd><c:out value="${igdbGame.summary}"/></dd>
 	</dl>
 	
+	<section class="gallery">
+		<c:forEach items="${igdbScreenshots}" var="screenshot">
+			<figure>
+				<img src="//images.igdb.com/igdb/image/upload/t_720p/${screenshot.imageId}.webp" width="${screenshot.width}" height="${screenshot.height}"/>
+			</figure>
+		</c:forEach>
+	</section>
+	
 	<form method="POST" action="${mvc.basePath}/source/igdb/@addSpecific">
 		<input type="hidden" name="game" value="${game.documentId}"/>
 		<input type="hidden" name="resultId" value="${resultId}"/>

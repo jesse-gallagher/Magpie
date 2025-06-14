@@ -16,16 +16,30 @@
 			</figure>
 		</header>
 		
-		<c:if test="${not empty details}">
+		<c:choose>
+		<c:when test="${not empty details}">
 			<p><c:out value="${details.summary}"/></p>
-		</c:if>
-		
-		<p>
-			<form method="GET" action="${mvc.basePath}/source/igdb/@add">
-				<input type="hidden" name="game" value="${game.documentId}" />
-				<input type="submit" value="${fn:escapeXml(translation.addGameDetails)}" />
-			</form>
-		</p>
+			
+			<c:if test="${not empty details.screenshots}">
+				<h3><c:out value="${translation.screenshots}"/></h3>
+				<section class="gallery">
+					<c:forEach items="${details.screenshots}" var="screenshot">
+							<figure>
+								<img src="${mvc.basePath}/api/gamedetails/${details.documentId}/${screenshot.fileName}" width="${screenshot.width}" height="${screenshot.height}"/>
+							</figure>
+					</c:forEach>
+				</section>
+			</c:if>
+		</c:when>
+		<c:otherwise>
+			<p>
+				<form method="GET" action="${mvc.basePath}/source/igdb/@add">
+					<input type="hidden" name="game" value="${game.documentId}" />
+					<input type="submit" value="${fn:escapeXml(translation.addGameDetails)}" />
+				</form>
+			</p>
+		</c:otherwise>
+		</c:choose>
 		
 		<dl>
 			<dt><c:out value="${translation.releaseDate}"/></dt>

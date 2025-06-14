@@ -4,9 +4,9 @@
     <text>34567Cg~[</text>
   </item>
   <item name="$TITLE">
-    <text>bean/GameDetailsCache.java</text>
+    <text>bean/igdb/IgdbCache.java</text>
   </item>
   <item name="$FileNames" sign="true">
-    <text>bean/GameDetailsCache.java</text>
+    <text>bean/igdb/IgdbCache.java</text>
   </item>
 </note>
