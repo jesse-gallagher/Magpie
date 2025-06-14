@@ -157,7 +157,7 @@ public enum AppUtil {
         EntityTag etag = new EntityTag(att.getETag());
         Response.ResponseBuilder builder = request.evaluatePreconditions(etag);
         if(builder == null) {
-            builder = Response.ok(att, att.getContentType())
+            builder = Response.ok(att.getData(), att.getContentType())
                 .tag(etag);
         }
 
