@@ -10,7 +10,7 @@
 		<details class="expanding-form">
 			<summary><c:out value="${translation.addFromGog}"/></summary>
 			
-			<form method="GET" action="${mvc.basePath}/gog/search">
+			<form method="GET" action="${mvc.basePath}/source/gog/search">
 				<fieldset>
 					<label for="searchField"><c:out value="${translation.namePrompt}"/></label>
 					<input type="text" name="search" required id="searchField"/>

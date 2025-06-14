@@ -1,4 +1,4 @@
-package controller;
+package controller.source;
 
 import java.text.MessageFormat;
 import java.util.Collection;

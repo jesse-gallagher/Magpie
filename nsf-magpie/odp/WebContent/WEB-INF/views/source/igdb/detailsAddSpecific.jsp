@@ -14,7 +14,7 @@
 		<dd><c:out value="${igdbGame.summary}"/></dd>
 	</dl>
 	
-	<form method="POST" action="${mvc.basePath}/library/metadata/@addSpecific">
+	<form method="POST" action="${mvc.basePath}/source/igdb/@addSpecific">
 		<input type="hidden" name="game" value="${game.documentId}"/>
 		<input type="hidden" name="resultId" value="${resultId}"/>
 		<input type="submit" value="${fn:escapeXml(translation.saveDetails)}"/>

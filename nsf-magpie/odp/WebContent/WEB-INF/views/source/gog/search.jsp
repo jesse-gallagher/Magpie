@@ -11,8 +11,8 @@
 	<c:forEach items="${result.products}" var="product">
 		<article>
 			<figure>
-				<a href="${mvc.basePath}/gog/game/${product.id}?tokenId=${tokenId}"><img src="${product.image}.webp" style="" /></a>
-				<figcaption><a href="${mvc.basePath}/gog/game/${product.id}?tokenId=${tokenId}"><c:out value="${product.title}"/></a></figcaption>
+				<a href="${mvc.basePath}/source/gog/game/${product.id}?tokenId=${tokenId}"><img src="${product.image}.webp" style="" /></a>
+				<figcaption><a href="${mvc.basePath}/source/gog/game/${product.id}?tokenId=${tokenId}"><c:out value="${product.title}"/></a></figcaption>
 			</figure>
 		</article>
 	</c:forEach>

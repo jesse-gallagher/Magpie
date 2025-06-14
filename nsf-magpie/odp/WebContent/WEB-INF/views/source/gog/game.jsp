@@ -6,7 +6,7 @@
 <t:layout>
 	<h2><c:out value="${translation.gogGame}"/></h2>
 	
-	<form method="POST" action="${mvc.basePath}/gog/game/@download">
+	<form method="POST" action="${mvc.basePath}/source/gog/game/@download">
 	
 		<dl>
 			<dt><c:out value="${translation.gameTitle}"/></dt>

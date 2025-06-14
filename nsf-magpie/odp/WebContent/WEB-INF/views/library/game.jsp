@@ -21,7 +21,7 @@
 		</c:if>
 		
 		<p>
-			<form method="GET" action="${mvc.basePath}/library/metadata/@add">
+			<form method="GET" action="${mvc.basePath}/source/igdb/@add">
 				<input type="hidden" name="game" value="${game.documentId}" />
 				<input type="submit" value="${fn:escapeXml(translation.addGameMetadata)}" />
 			</form>
