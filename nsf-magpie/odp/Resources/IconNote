@@ -16,9 +16,6 @@ L2ZvgAAACMZmZmZmZmZmZmZmbIAAAACMZmZmZmZmZmZmZsgAAAAACMZmZmZmZmZmZmyAAAAAAACM
 AAAAUEECICABAAD/////+A4DgA==
 </rawitemdata>
   </item>
-  <item name="$DefaultFrameset">
-    <text>Outer Frame</text>
-  </item>
   <item name="$DefaultXPage">
     <text>Lists.xsp</text>
   </item>
@@ -28,14 +25,8 @@ AAAAUEECICABAAD/////+A4DgA==
   <item name="$LaunchXPageRunOnServer">
     <text>0</text>
   </item>
-  <item name="$FlagsNoRefresh">
-    <text/>
-  </item>
   <item name="$AllowPost8HTML">
     <text>1</text>
-  </item>
-  <item name="$DefaultWebLaunchPage">
-    <text>HomeRedir</text>
   </item>
   <item name="$Daos">
     <text>1</text>
@@ -43,11 +34,20 @@ AAAAUEECICABAAD/////+A4DgA==
   <item name="$LargeSummary">
     <text>0</text>
   </item>
-  <item name="$Flags">
-    <text>J7FKzNZ4qE</text>
+  <item name="$DefaultFrameset">
+    <text>Outer Frame</text>
+  </item>
+  <item name="$DefaultWebLaunchPage">
+    <text>HomeRedir</text>
   </item>
   <item name="$TITLE">
     <text>Magpie
 webpath=magpie</text>
+  </item>
+  <item name="$Flags">
+    <text>Jz47qNZFKE</text>
+  </item>
+  <item name="$FlagsNoRefresh">
+    <text>rv</text>
   </item>
 </note>
