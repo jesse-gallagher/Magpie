@@ -3,7 +3,6 @@ package controller.source;
 import java.net.URI;
 import java.text.MessageFormat;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Objects;
@@ -34,7 +33,7 @@ import jakarta.ws.rs.QueryParam;
 import model.ClientID;
 import model.Game;
 import model.GameDetails;
-import model.GameDetails.ScreenshotInfo;
+import model.GameDetails.ImageInfo;
 import util.AppUtil;
 
 @Controller
@@ -118,7 +117,14 @@ public class IgdbController {
 			.map(List::getFirst)
 			.toList();
 		
-		detailsCache.put(resultId, igdbGame, screenshots);
+		List<IgdbImage> artworks = igdbGame.artworkIds().stream()
+				.filter(Objects::nonNull)
+				.map(id -> igdbApi.listArtworks(twitchId.getClientId(), "Bearer " + token, "fields *; where id = " + id + ";"))
+				.filter(shots -> !shots.isEmpty())
+				.map(List::getFirst)
+				.toList();
+		
+		detailsCache.put(resultId, igdbGame, screenshots, artworks);
 		
 		models.put("game", game);
 		models.put("igdbGame", igdbGames.getFirst());
@@ -129,25 +135,34 @@ public class IgdbController {
 	@Path("@addSpecific")
 	@POST
 	public String saveDetailsSpecific(@NotEmpty @FormParam("game") String gameId, @FormParam("resultId") int resultId) {
-		IgdbGame game = detailsCache.get(resultId)
+		IgdbCache.CacheEntry gameCache = detailsCache.get(resultId)
 			.orElseThrow(() -> new NotFoundException(MessageFormat.format("Could not find cached details for ID {0}", resultId)));
-		List<IgdbImage> screenshots = detailsCache.getScreenshots(resultId)
-			.orElseGet(Collections::emptyList);
 		
-		GameDetails details = game.toGameDetails(gameId);
+		GameDetails details = gameCache.game().toGameDetails(gameId);
 		
 		// Download and attach any screenshots
 		Collection<java.nio.file.Path> cleanup = new HashSet<>();
 		try {
-			screenshots.stream()
+			gameCache.screenshots().stream()
 				.map(screenshot -> {
 					URI uri = URI.create(String.format("https://images.igdb.com/igdb/image/upload/t_720p/%s.webp", screenshot.imageId()));
 					java.nio.file.Path download = AppUtil.download(uri, null);
 					details.attachments().add(EntityAttachment.of(download));
-					details.screenshots().add(new ScreenshotInfo(download.getFileName().toString(), screenshot.height() == null ? 0 : screenshot.height(), screenshot.width() == null ? 0 : screenshot.width()));
+					details.screenshots().add(new ImageInfo(download.getFileName().toString(), screenshot.height() == null ? 0 : screenshot.height(), screenshot.width() == null ? 0 : screenshot.width()));
 					return download;
 				})
 				.forEach(cleanup::add);
+			
+			gameCache.artworks().stream()
+				.map(artwork -> {
+					URI uri = URI.create(String.format("https://images.igdb.com/igdb/image/upload/t_720p/%s.webp", artwork.imageId()));
+					java.nio.file.Path download = AppUtil.download(uri, null);
+					details.attachments().add(EntityAttachment.of(download));
+					details.artworks().add(new ImageInfo(download.getFileName().toString(), artwork.height() == null ? 0 : artwork.height(), artwork.width() == null ? 0 : artwork.width()));
+					return download;
+				})
+				.forEach(cleanup::add);
+			
 			gameDetailsRepository.save(details);
 		} finally {
 			AppUtil.deleteAll(cleanup);

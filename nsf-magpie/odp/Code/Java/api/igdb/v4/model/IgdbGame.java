@@ -69,6 +69,6 @@ public record IgdbGame(
 ) {
 	
 	public GameDetails toGameDetails(String gameId) {
-		return new GameDetails(null, "igdb", gameId, url, summary, new ArrayList<>(), new ArrayList<>());
+		return new GameDetails(null, "igdb", gameId, url, summary, new ArrayList<>(), new ArrayList<>(), new ArrayList<>());
 	}
 }

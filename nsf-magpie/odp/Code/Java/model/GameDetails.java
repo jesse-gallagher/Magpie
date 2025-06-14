@@ -19,14 +19,15 @@ public record GameDetails(
 	@Column String gameId,
 	@Column String url,
 	@Column String summary,
-	@Column @ItemStorage(type = ItemStorage.Type.JSON) List<ScreenshotInfo> screenshots,
+	@Column @ItemStorage(type = ItemStorage.Type.JSON) List<ImageInfo> screenshots,
+	@Column @ItemStorage(type = ItemStorage.Type.JSON) List<ImageInfo> artworks,
 	@Column(DominoConstants.FIELD_ATTACHMENTS) List<EntityAttachment> attachments
 ) {
 	public interface Repository extends DominoRepository<GameDetails, String> {
 		Stream<GameDetails> findByGameId(String gameId);
 	}
 	
-	public record ScreenshotInfo(String fileName, int height, int width) {}
+	public record ImageInfo(String fileName, int height, int width) {}
 	
 	
 }

@@ -35,4 +35,9 @@ public interface IgdbApi {
 	@Path("screenshots")
 	@Produces(MediaType.APPLICATION_JSON)
 	List<IgdbImage> listScreenshots(@HeaderParam("Client-ID") String clientId, @HeaderParam(HttpHeaders.AUTHORIZATION) String authorization, String body);
+	
+	@POST
+	@Path("artworks")
+	@Produces(MediaType.APPLICATION_JSON)
+	List<IgdbImage> listArtworks(@HeaderParam("Client-ID") String clientId, @HeaderParam(HttpHeaders.AUTHORIZATION) String authorization, String body);
 }

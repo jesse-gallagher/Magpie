@@ -11,19 +11,15 @@ import jakarta.enterprise.context.ApplicationScoped;
 
 @ApplicationScoped
 public class IgdbCache {
-	private Map<Integer, IgdbGame> cache = new HashMap<>();
-	private Map<Integer, List<IgdbImage>> screenshotCache = new HashMap<>();
+	public record CacheEntry(IgdbGame game, List<IgdbImage> screenshots, List<IgdbImage> artworks) {}
 	
-	public void put(int resultId, IgdbGame details, List<IgdbImage> screenshotUrls) {
-		this.cache.put(resultId, details);
-		this.screenshotCache.put(resultId, screenshotUrls);
+	private Map<Integer, CacheEntry> cache = new HashMap<>();
+	
+	public void put(int resultId, IgdbGame details, List<IgdbImage> screenshots, List<IgdbImage> artworks) {
+		this.cache.put(resultId, new CacheEntry(details, screenshots, artworks));
 	}
 	
-	public Optional<IgdbGame> get(int resultId) {
+	public Optional<CacheEntry> get(int resultId) {
 		return Optional.ofNullable(cache.get(resultId));
-	}
-	
-	public Optional<List<IgdbImage>> getScreenshots(int resultId) {
-		return Optional.ofNullable(screenshotCache.get(resultId));
 	}
 }
