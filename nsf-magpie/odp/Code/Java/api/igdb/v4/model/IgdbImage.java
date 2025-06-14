@@ -2,7 +2,7 @@ package api.igdb.v4.model;
 
 import jakarta.json.bind.annotation.JsonbProperty;
 
-public record IgdbScreenshot(
+public record IgdbImage(
 	@JsonbProperty("alpha_channel") boolean alphaChannel,
 	boolean animated,
 	String checksum,

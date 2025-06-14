@@ -4,9 +4,9 @@
     <text>34567Cg~[</text>
   </item>
   <item name="$TITLE">
-    <text>api/igdb/v4/model/IgdbScreenshot.java</text>
+    <text>api/igdb/v4/model/IgdbImage.java</text>
   </item>
   <item name="$FileNames" sign="true">
-    <text>api/igdb/v4/model/IgdbScreenshot.java</text>
+    <text>api/igdb/v4/model/IgdbImage.java</text>
   </item>
 </note>

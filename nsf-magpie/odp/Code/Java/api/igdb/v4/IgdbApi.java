@@ -5,7 +5,7 @@ import java.util.List;
 import org.eclipse.microprofile.rest.client.inject.RegisterRestClient;
 
 import api.igdb.v4.model.IgdbGame;
-import api.igdb.v4.model.IgdbScreenshot;
+import api.igdb.v4.model.IgdbImage;
 import api.igdb.v4.model.SearchResult;
 import jakarta.ws.rs.HeaderParam;
 import jakarta.ws.rs.POST;
@@ -34,5 +34,5 @@ public interface IgdbApi {
 	@POST
 	@Path("screenshots")
 	@Produces(MediaType.APPLICATION_JSON)
-	List<IgdbScreenshot> listScreenshots(@HeaderParam("Client-ID") String clientId, @HeaderParam(HttpHeaders.AUTHORIZATION) String authorization, String body);
+	List<IgdbImage> listScreenshots(@HeaderParam("Client-ID") String clientId, @HeaderParam(HttpHeaders.AUTHORIZATION) String authorization, String body);
 }

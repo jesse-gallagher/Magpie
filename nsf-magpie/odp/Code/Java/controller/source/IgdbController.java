@@ -15,7 +15,7 @@ import com.ibm.commons.util.StringUtil;
 
 import api.igdb.v4.IgdbApi;
 import api.igdb.v4.model.IgdbGame;
-import api.igdb.v4.model.IgdbScreenshot;
+import api.igdb.v4.model.IgdbImage;
 import api.igdb.v4.model.SearchResult;
 import api.twitch.TwitchAuthApi;
 import api.twitch.model.OAuthResponse;
@@ -111,7 +111,7 @@ public class IgdbController {
 		
 		IgdbGame igdbGame = igdbGames.getFirst();
 
-		List<IgdbScreenshot> screenshots = igdbGame.screenshotIds().stream()
+		List<IgdbImage> screenshots = igdbGame.screenshotIds().stream()
 			.filter(Objects::nonNull)
 			.map(id -> igdbApi.listScreenshots(twitchId.getClientId(), "Bearer " + token, "fields *; where id = " + id + ";"))
 			.filter(shots -> !shots.isEmpty())
@@ -131,7 +131,7 @@ public class IgdbController {
 	public String saveDetailsSpecific(@NotEmpty @FormParam("game") String gameId, @FormParam("resultId") int resultId) {
 		IgdbGame game = detailsCache.get(resultId)
 			.orElseThrow(() -> new NotFoundException(MessageFormat.format("Could not find cached details for ID {0}", resultId)));
-		List<IgdbScreenshot> screenshots = detailsCache.getScreenshots(resultId)
+		List<IgdbImage> screenshots = detailsCache.getScreenshots(resultId)
 			.orElseGet(Collections::emptyList);
 		
 		GameDetails details = game.toGameDetails(gameId);
