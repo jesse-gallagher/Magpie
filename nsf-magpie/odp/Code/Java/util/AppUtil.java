@@ -49,16 +49,12 @@ public enum AppUtil {
 			String unitPart = matcher.group(3);
 			
 			double num = Double.parseDouble(numPart);
-			switch(unitPart) {
-			case "MB":
-				return (long)(num * 1024 * 1024);
-			case "GB":
-				return (long)(num * 1024 * 1024 * 1024);
-			case "TB":
-				return (long)(num * 1024 * 1024 * 1024 * 1024);
-			default:
-				return (long)num;
-			}
+			return switch(unitPart) {
+				case "MB" -> (long)(num * 1024 * 1024);
+				case "GB" -> (long)(num * 1024 * 1024 * 1024);
+				case "TB" -> (long)(num * 1024 * 1024 * 1024 * 1024);
+				default -> (long)num;
+			};
 		}
 		
 		return 0;
