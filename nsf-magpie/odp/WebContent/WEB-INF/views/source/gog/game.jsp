@@ -85,6 +85,7 @@
 	
 		<input type="hidden" name="gameId" value="${gameId}"/>
 		<input type="hidden" name="tokenId" value="${tokenId}"/>
+		<input type="hidden" name="${mvc.csrf.name}" value="${mvc.csrf.token}"/>
 		<input type="submit" value="Download Game Data"/>
 	</form>
 </t:layout>
