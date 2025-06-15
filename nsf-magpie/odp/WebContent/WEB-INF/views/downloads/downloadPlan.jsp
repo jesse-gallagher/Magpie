@@ -39,8 +39,20 @@
 						
 						if(planStatus.plan.state === "InProgress") {
 							// For now, progress is just based on count of downloads, not size
-							const totalCount = planStatus.plan.installerUrls.length + planStatus.plan.extraUrls.length;
-							const completeCount = planStatus.plan.installerIds.length + planStatus.plan.extraIds.length;
+							let totalCount = 0;
+							if(planStatus.plan.installUrls) {
+								totalCount += planStatus.plan.installerUrls.length;
+							}
+							if(planStatus.plan.extraUrls) {
+								totalCount += planStatus.plan.extraUrls.length;
+							}
+							let completeCount = 0;
+							if(planStatus.plan.installerIds) {
+								completeCount += planStatus.plan.installerIds.length;
+							}
+							if(planStatus.plan.extraIds) {
+								completeCount += planStatus.plan.extraIds.length;
+							}
 							
 							if(totalCount > 0) {
 								const progress = document.getElementById("planProgress");
