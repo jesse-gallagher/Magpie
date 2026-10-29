@@ -9,9 +9,6 @@
   <item name="$FileModDT" sign="true">
     <datetime>20250223T212735,08-05</datetime>
   </item>
-  <item name="$FileNames" sign="true">
-    <text>normalize.css</text>
-  </item>
   <item name="$MimeCharSet" sign="true">
     <text>UTF-8</text>
   </item>
@@ -20,5 +17,8 @@
   </item>
   <item name="$DesignerBuild" sign="true">
     <text>Build V1450_12042024</text>
+  </item>
+  <item name="$FileNames" sign="true">
+    <text>css_2fnormalize.css</text>
   </item>
 </note>

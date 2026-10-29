@@ -1,13 +1,14 @@
 <?xml version='1.0' encoding='utf-8'?>
-<note class='form' xmlns='http://www.lotus.com/dxl' version='14.5' replicaid='85258C3300617733'>
-<noteinfo noteid='13a' unid='F18692A2B6209583852577EF0068D21A' sequence='14'>
+<note class='form' xmlns='http://www.lotus.com/dxl' version='14.5' maintenanceversion='1.0'
+ replicaid='85258C3300617733'>
+<noteinfo noteid='1b2' unid='F18692A2B6209583852577EF0068D21A' sequence='20'>
 <created><datetime>20101204T140455,30-05</datetime></created>
-<modified><datetime>20250216T124435,59-05</datetime></modified>
-<revised><datetime>20130104T111443,79-05</datetime></revised>
-<lastaccessed><datetime>20250216T124435,58-05</datetime></lastaccessed>
-<addedtofile><datetime>20250216T124435,58-05</datetime></addedtofile></noteinfo>
-<updatedby><name>CN=Jesse Gallagher/O=MTC</name><name>CN=Jesse Gallagher/O=Frost</name></updatedby>
-<wassignedby><name>CN=Jesse Gallagher/O=Frost</name></wassignedby>
+<modified><datetime dst='true'>20250729T093741,96-04</datetime></modified>
+<revised><datetime dst='true'>20250614T114724,22-04</datetime></revised>
+<lastaccessed><datetime dst='true'>20250729T093741,95-04</datetime></lastaccessed>
+<addedtofile><datetime dst='true'>20250729T093741,95-04</datetime></addedtofile></noteinfo>
+<updatedby><name>CN=Jesse Gallagher/O=IKSG</name></updatedby>
+<wassignedby><name>CN=Jesse Gallagher/O=IKSG</name></wassignedby>
 <item name='$Flags'><text>34yQC</text></item>
 <item name='$TITLE'><text>$ACTIONS</text></item>
 <item name='$Body' sign='true' seal='true'>
