@@ -5,6 +5,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.lang.System.Logger;
+import java.lang.System.Logger.Level;
+import java.net.CookieHandler;
 import java.net.URI;
 import java.net.http.HttpClient;
 import java.net.http.HttpClient.Redirect;
@@ -16,12 +19,12 @@ import java.nio.file.Path;
 import java.text.MessageFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Consumer;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 
 import org.eclipse.jnosql.communication.driver.attachment.EntityAttachment;
 import org.eclipse.microprofile.rest.client.RestClientBuilder;
@@ -45,7 +48,9 @@ import event.DownloadStartEvent;
 import jakarta.enterprise.event.Event;
 import jakarta.enterprise.inject.spi.CDI;
 import jakarta.enterprise.util.TypeLiteral;
+import jakarta.ws.rs.client.ClientResponseFilter;
 import jakarta.ws.rs.core.HttpHeaders;
+import jakarta.ws.rs.core.NewCookie;
 import model.Game;
 import model.GameDownloadPlan;
 import model.GameExtra;
@@ -55,7 +60,7 @@ import model.UserToken;
 import util.AppUtil;
 
 public class DownloadGameTask implements Runnable {
-	private static final Logger log = Logger.getLogger(DownloadGameTask.class.getName());
+	private static final Logger log = System.getLogger(DownloadGameTask.class.getName());
 	
 	private final UserToken userToken;
 	
@@ -92,13 +97,17 @@ public class DownloadGameTask implements Runnable {
 			
 			String authToken = response.accessToken();
 			
+			Map<String, NewCookie> cookies = new HashMap<>();
 			GogAccountApi accountApi = RestClientBuilder.newBuilder()
 				.baseUri(GogAccountApi.BASE_URI)
+				.register((ClientResponseFilter)(requestContext, responseContext) -> {
+					cookies.putAll(responseContext.getCookies());
+				})
 				.build(GogAccountApi.class);
 			
 			GameDetails details = accountApi.getGameDetails("Bearer " + authToken, plan.getGameId());
 			
-			Game game = findOrCreateGame(authToken, details);
+			Game game = findOrCreateGame(authToken, cookies, details);
 			plan.setExtraUrls(
 				details.extras().stream()
 					.map(api.gog.model.GameExtra::manualUrl)
@@ -119,18 +128,16 @@ public class DownloadGameTask implements Runnable {
 			
 			details.extras().stream()
 				.filter(extra -> extraUrls.contains(extra.manualUrl()))
-				.forEach(extra -> this.downloadExtra(authToken, game.documentId(), extra));
+				.forEach(extra -> this.downloadExtra(authToken, cookies, game.documentId(), extra));
 			
 			details.getParsedDownloads().stream()
 				.filter(entry -> downloadUrls.contains(entry.download().manualUrl()))
-				.forEach(entry -> this.downloadInstaller(authToken, game.documentId(), entry.language(), entry.os(), entry.download()));
+				.forEach(entry -> this.downloadInstaller(authToken, cookies, game.documentId(), entry.language(), entry.os(), entry.download()));
 			
 			plan.setState(GameDownloadPlan.State.Complete);
 			plan = planRepository.save(plan, true);
 		} catch(Exception e) {
-			if(log.isLoggable(Level.SEVERE)) {
-				log.log(Level.SEVERE, MessageFormat.format("Encountered exception downloading game ID {0}", Integer.toString(plan.getGameId())), e);
-			}
+			log.log(Level.ERROR, () -> MessageFormat.format("Encountered exception downloading game ID {0}", Integer.toString(plan.getGameId())), e);
 			
 			try(StringWriter sw = new StringWriter(); PrintWriter w = new PrintWriter(sw)) {
 				e.printStackTrace(w);
@@ -145,7 +152,7 @@ public class DownloadGameTask implements Runnable {
 		}
 	}
 	
-	private Game findOrCreateGame(String authToken, GameDetails details) {
+	private Game findOrCreateGame(String authToken,  Map<String, NewCookie> cookies, GameDetails details) {
 		Game.Repository gameRepository = CDI.current().select(Game.Repository.class).get();
 		GameMetadata.Repository metadataRepository = CDI.current().select(GameMetadata.Repository.class).get();
 		return gameRepository.findByTitle(details.title()).orElseGet(() -> {
@@ -163,7 +170,7 @@ public class DownloadGameTask implements Runnable {
 				Optional<GameMetadata> gameMetadata = metadataRepository.findByGameId(ViewQuery.query().key(plan.getGameId(), true));
 				if(gameMetadata.isPresent()) {
 					if(StringUtil.isNotEmpty(gameMetadata.get().imageUrl())) {
-						Path p = download(authToken, gameMetadata.get().imageUrl() + ".webp", "image.webp", null);
+						Path p = download(authToken, cookies, gameMetadata.get().imageUrl() + ".webp", "image.webp", null);
 						imageFileName.set(p.getFileName().toString());
 						attachments.add(EntityAttachment.of(p));
 						tempFiles.add(p);
@@ -173,7 +180,7 @@ public class DownloadGameTask implements Runnable {
 				}
 				
 				if(StringUtil.isNotEmpty(details.backgroundImage())) {
-					Path p = download(authToken, details.backgroundImage() + ".webp", "background.webp", null);
+					Path p = download(authToken, cookies, details.backgroundImage() + ".webp", "background.webp", null);
 					backgroundFileName.set(p.getFileName().toString());
 					attachments.add(EntityAttachment.of(p));
 					tempFiles.add(p);
@@ -198,7 +205,7 @@ public class DownloadGameTask implements Runnable {
 		});
 	}
 
-	private void downloadInstaller(String authToken, String gameDocumentId, String language, String os, GameDownload download) {
+	private void downloadInstaller(String authToken, Map<String, NewCookie> cookies, String gameDocumentId, String language, String os, GameDownload download) {
 		CDI<Object> cdi = CDI.current();
 		
 		GameDownloadPlan.Repository planRepository = cdi.select(GameDownloadPlan.Repository.class).get();
@@ -208,7 +215,7 @@ public class DownloadGameTask implements Runnable {
 		Event<DownloadStartEvent> event = cdi.select(new TypeLiteral<Event<DownloadStartEvent>>() {}).get();
 		event.fire(new DownloadStartEvent(plan, Installer.class, download));
 		
-		downloadAndDelete(authToken, download.manualUrl(), download, tempFile -> {
+		downloadAndDelete(authToken, cookies, download.manualUrl(), download, tempFile -> {
 			Installer installer = new Installer(null, gameDocumentId, download.name(), language, os, download.manualUrl(), download.version(), download.date(), List.of(EntityAttachment.of(tempFile)));
 			installer = installerRepository.save(installer, true);
 			
@@ -221,7 +228,7 @@ public class DownloadGameTask implements Runnable {
 		});
 	}
 	
-	private void downloadExtra(String authToken, String gameDocumentId, api.gog.model.GameExtra extra) {
+	private void downloadExtra(String authToken, Map<String, NewCookie> cookies, String gameDocumentId, api.gog.model.GameExtra extra) {
 		CDI<Object> cdi = CDI.current();
 		
 		GameDownloadPlan.Repository planRepository = cdi.select(GameDownloadPlan.Repository.class).get();
@@ -231,7 +238,7 @@ public class DownloadGameTask implements Runnable {
 		Event<DownloadStartEvent> event = cdi.select(new TypeLiteral<Event<DownloadStartEvent>>() {}).get();
 		event.fire(new DownloadStartEvent(plan, GameExtra.class, extra));
 		
-		downloadAndDelete(authToken, extra.manualUrl(), extra, tempFile -> {
+		downloadAndDelete(authToken, cookies, extra.manualUrl(), extra, tempFile -> {
 			GameExtra gameExtra = new GameExtra(null, gameDocumentId, extra.name(), extra.type(), extra.manualUrl(), List.of(EntityAttachment.of(tempFile)));
 			gameExtra = gameExtraRepository.save(gameExtra, true);
 			
@@ -244,14 +251,31 @@ public class DownloadGameTask implements Runnable {
 		});
 	}
 	
-	private Path download(String authToken, String manualUrl, String destFileName, DownloadableFile contextFile) {
+	private Path download(String authToken,  Map<String, NewCookie> cookies, String manualUrl, String destFileName, DownloadableFile contextFile) {
 		ComponentModule mod = ComponentModuleLocator.getDefault().get().getActiveModule();
 		
-		try(HttpClient http = HttpClient.newBuilder().followRedirects(Redirect.ALWAYS).build()) {
+		var cookieValues = cookies.values()
+			.stream()
+			.map(c -> c.getName() + '=' + c.getValue())
+			.toList();
+		CookieHandler cookieHandler = new CookieHandler() {
+			
+			@Override
+			public void put(URI uri, Map<String, List<String>> responseHeaders) throws IOException {
+				
+			}
+			
+			@Override
+			public Map<String, List<String>> get(URI uri, Map<String, List<String>> requestHeaders) throws IOException {
+				return Map.of(HttpHeaders.COOKIE, cookieValues);
+			}
+		};
+		try(HttpClient http = HttpClient.newBuilder().followRedirects(Redirect.ALWAYS).cookieHandler(cookieHandler).build()) {
 			URI baseUri = URI.create("https://gog.com/");
 			
 			URI attUri = baseUri.resolve(manualUrl);
 			
+			log.log(Level.DEBUG, () -> MessageFormat.format("Downloading attachment {0} with cookies {1}", attUri, cookieValues));
 			HttpRequest req = HttpRequest.newBuilder(attUri)
 				.header(HttpHeaders.AUTHORIZATION, "Bearer " + authToken)
 				.GET()
@@ -310,11 +334,11 @@ public class DownloadGameTask implements Runnable {
 	}
 	
 
-	private void downloadAndDelete(String authToken, String manualUrl, DownloadableFile contextFile, Consumer<Path> callback) {
+	private void downloadAndDelete(String authToken,  Map<String, NewCookie> cookies, String manualUrl, DownloadableFile contextFile, Consumer<Path> callback) {
 		try {
 			Path tempFile = null;
 			try {
-				tempFile = download(authToken, manualUrl, null, contextFile);
+				tempFile = download(authToken, cookies, manualUrl, null, contextFile);
 				
 				callback.accept(tempFile);
 			} finally {
